@@ -1,0 +1,8 @@
+{
+  "name": "NFTR-eader",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react",
+  "id": "73715edb"
+}
