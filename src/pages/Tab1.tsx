@@ -19,7 +19,9 @@ import {
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
+import { useHistory, useParams } from "react-router-dom";
 import { filterOutline, gridOutline, searchOutline } from "ionicons/icons";
+import { userInfo } from "os";
 import { useRef, useState } from "react";
 import "./Tab1.css";
 
@@ -70,12 +72,12 @@ const blockchains: IBlockchain[] = [
 ];
 
 const Tab1: React.FC = () => {
+  const history = useHistory();
+
   const a: number = 0;
 
-  // var, let, const
   const [isSearching, setIsSearching] = useState(false);
   const [search, setSearch] = useState("");
-  // const searchInputRef = useRef();
   const Popover = () => (
     <IonContent className="ion-padding">
       <IonList>
@@ -92,6 +94,9 @@ const Tab1: React.FC = () => {
       </IonList>
     </IonContent>
   );
+  function navigateTo(name: string) {
+    history.push(`/tab2/${name}`);
+  }
 
   const [present, dismiss] = useIonPopover(Popover, {
     onDismiss: (data: any, role: string) => dismiss(data, role),
@@ -167,7 +172,10 @@ const Tab1: React.FC = () => {
               .map((blockchain: IBlockchain, blockchainIndex: number) => (
                 <IonCol size="6" key={blockchainIndex}>
                   {blockchainIndex < 5 && (
-                    <IonCard className="ion-no-margin">
+                    <IonCard
+                      onClick={() => navigateTo(blockchain.name)}
+                      className="ion-no-margin"
+                    >
                       <IonCardHeader>
                         <IonImg
                           style={{

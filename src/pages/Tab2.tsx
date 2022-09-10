@@ -30,8 +30,16 @@ import {
 import { useEffect, useState } from "react";
 import "./Tab2.css";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const Tab2: React.FC = () => {
+  const params: any = useParams();
+  useEffect(() => {
+    setBlockchainName(params.blockchainName);
+  }, []);
+
+  // console.log(params);
+  const [blockchainName, setBlockchainName] = useState("");
   const [address, setAddress] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -106,10 +114,9 @@ const Tab2: React.FC = () => {
     // const addres = "0xED972ea8ed13DeE21F6ec697820B4961b4988881";
     // const address = "0x8a90cab2b38dba80c64b7734e58ee1db38b8992e";
     // const address = "0xa9EF99546530A6c10333c52ad4b96d79bEd1F3b3";
-    const chain = "polygon";
     const API_URL = "https://deep-index.moralis.io/api/v2";
     const { data } = await axios.get(
-      `${API_URL}/${address}/nft?chain=${chain}&format=decimal`,
+      `${API_URL}/${address}/nft?chain=${blockchainName.toLowerCase()}&format=decimal`,
       {
         headers: {
           "X-Api-Key":
@@ -125,22 +132,6 @@ const Tab2: React.FC = () => {
 
     const posts = await Promise.all(
       data.result.map(async (nft: any) => {
-        if (nft.image || (nft.metadata && nft.metadata.image)) {
-          // run the call for saving base64 img at orbit db ipfs
-          const EXPRESS_SERVER = "http://localhost:3000";
-          const stm = await axios.post(`${EXPRESS_SERVER}/img`, {
-            imgUrl: nft.image || nft.metadata.image,
-          });
-
-          console.log(stm);
-          const news = {
-            ...nft,
-            image: `data:image/png;base64,${stm.data.base64}`,
-          };
-          console.log(news);
-          return news;
-        }
-
         return nft;
       })
     );
