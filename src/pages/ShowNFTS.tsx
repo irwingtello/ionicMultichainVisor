@@ -1,5 +1,6 @@
 import {
   IonAvatar,
+  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -205,7 +206,7 @@ const ShowNFTS: React.FC = () => {
         <IonGrid>
           <IonRow>
             <IonCol>
-              <div className="text-lg ion-margin-bottom">
+              <div className="text-lg ion-margin-bottom ion-text-justify">
                 <IonInput
                   style={{ fontSize: "12px" }}
                   className="ion-no-padding border-bottom-white"
@@ -217,6 +218,9 @@ const ShowNFTS: React.FC = () => {
                   onIonChange={(e: any) => setAddress(e.detail.value)}
                   autofocus
                 ></IonInput>
+                <IonButton onClick={fetchNfts} >
+                  Search
+                </IonButton>
               </div>
             </IonCol>
             <IonCol className="ion-text-right">
