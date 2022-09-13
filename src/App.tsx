@@ -11,8 +11,8 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { informationOutline, bookOutline, globeOutline } from "ionicons/icons";
-import Tab1 from "./pages/Tab1";
-import Tab2 from "./pages/Tab2";
+import Selectblockchain from "./pages/Selectblockchain";
+import ShowNFTS from "./pages/ShowNFTS";
 import Tab3 from "./pages/Tab3";
 
 /* Core CSS required for Ionic components to work properly */
@@ -41,25 +41,25 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route exact path="/tab1">
-            <Tab1 />
+          <Route exact path="/Selectblockchain">
+            <Selectblockchain />
           </Route>
-          <Route exact path="/tab2/:blockchainName">
-            <Tab2 />
+          <Route exact path="/ShowNFTS/:blockchainName">
+            <ShowNFTS/>
           </Route>
           <Route path="/tab3">
             <Tab3 />
           </Route>
           <Route exact path="/">
-            <Redirect to="/tab1" />
+            <Redirect to="/Selectblockchain" />
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
+          <IonTabButton tab="Selectblockchain" href="/Selectblockchain">
             <IonIcon icon={globeOutline} />
             <IonLabel>Blockchain</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
+          <IonTabButton tab="ShowNFTS" href="/ShowNFTS">
             <IonIcon icon={bookOutline} />
             <IonLabel>Reader</IonLabel>
           </IonTabButton>

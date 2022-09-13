@@ -23,10 +23,10 @@ import { useHistory, useParams } from "react-router-dom";
 import { filterOutline, gridOutline, searchOutline } from "ionicons/icons";
 import { userInfo } from "os";
 import { useRef, useState } from "react";
-import "./Tab1.css";
+import "./Selectblockchain.css";
 
 interface IBlockchain {
-  chainId: number;
+  chainId: string;
   name: string;
   img: string;
 }
@@ -35,43 +35,39 @@ const FIXED_HEIGHT = 168;
 
 const blockchains: IBlockchain[] = [
   {
-    chainId: 1,
-    name: "Ethereum",
+    chainId:"0x1",
+    name: "ETH",  //"Ethereum",
     img: "https://seeklogo.com/images/E/ethereum-logo-EC6CDBA45B-seeklogo.com.png",
   },
   {
-    chainId: 2,
+    chainId: "0x89",
     name: "Polygon",
     img: "https://seeklogo.com/images/P/polygon-matic-logo-1DFDA3A3A8-seeklogo.com.png",
   },
+  
   {
-    chainId: 3,
-    name: "Solana",
-    img: "https://seeklogo.com/images/S/solana-sol-logo-12828AD23D-seeklogo.com.png",
-  },
-  {
-    chainId: 4,
-    name: "BSC",
+    chainId: "0x38",
+    name: "BNB", //"BSC",
     img: "https://seeklogo.com/images/B/binance-coin-bnb-logo-CD94CC6D31-seeklogo.com.png",
   },
   {
-    chainId: 5,
+    chainId: "0xfa",
     name: "Fantom",
     img: "https://cryptologos.cc/logos/fantom-ftm-logo.png",
   },
   {
-    chainId: 6,
+    chainId: "0xa86a",
     name: "Avalanche",
     img: "https://cryptologos.cc/logos/avalanche-avax-logo.png",
   },
   {
-    chainId: 10,
+    chainId: "xDai",
     name: "POAP",
     img: "https://poap.gallery/icons/poap_dark.png",
   },
 ];
 
-const Tab1: React.FC = () => {
+const Selectblockchain: React.FC = () => {
   const history = useHistory();
 
   const a: number = 0;
@@ -94,8 +90,16 @@ const Tab1: React.FC = () => {
       </IonList>
     </IonContent>
   );
-  function navigateTo(name: string) {
-    history.push(`/tab2/${name}`);
+  function navigateTo(name:string) {
+    // editar esto con UseContext
+    
+    
+    
+    history.push(`/ShowNFTS/${name}`);
+
+
+
+
   }
 
   const [present, dismiss] = useIonPopover(Popover, {
@@ -109,7 +113,7 @@ const Tab1: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>nftReader</IonTitle>
+          <IonTitle>NFT VISOR</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding" fullscreen>
@@ -119,49 +123,8 @@ const Tab1: React.FC = () => {
               <div className="text-lg ion-margin-bottom">Select blockchain</div>
             </IonCol>
             <IonCol className="ion-text-right">
-              {!isSearching && (
-                <IonIcon
-                  size="small"
-                  className="ion-margin-start"
-                  icon={gridOutline}
-                />
-              )}
-              {!isSearching && (
-                <IonIcon
-                  size="small"
-                  className="ion-margin-start"
-                  icon={filterOutline}
-                />
-              )}
-              {!isSearching && (
-                <IonIcon
-                  size="small"
-                  className="ion-margin-start"
-                  icon={searchOutline}
-                  onClick={() => setIsSearching(true)}
-                />
-              )}
-              {isSearching && (
-                <IonRow className="ion-align-items-center">
-                  <IonCol class="ion-no-padding" size="4">
-                    <IonIcon
-                      size="small"
-                      className="ion-margin-end"
-                      icon={searchOutline}
-                      onClick={() => setIsSearching(false)}
-                    />
-                  </IonCol>
-                  <IonCol class="ion-no-padding" size="8">
-                    <IonInput
-                      className="ion-no-padding border-bottom-white"
-                      value={search}
-                      placeholder="Search"
-                      onIonChange={(e: any) => setSearch(e.detail.value)}
-                      autofocus
-                    ></IonInput>
-                  </IonCol>
-                </IonRow>
-              )}
+             
+                
             </IonCol>
           </IonRow>
         </IonGrid>
@@ -171,9 +134,9 @@ const Tab1: React.FC = () => {
               .slice(0, 6)
               .map((blockchain: IBlockchain, blockchainIndex: number) => (
                 <IonCol size="6" key={blockchainIndex}>
-                  {blockchainIndex < 5 && (
+                  {blockchainIndex < 6 && (
                     <IonCard
-                      onClick={() => navigateTo(blockchain.name)}
+                      onClick={() => navigateTo(blockchain.name)} // chainId   o    name
                       className="ion-no-margin"
                     >
                       <IonCardHeader>
@@ -205,20 +168,9 @@ const Tab1: React.FC = () => {
                       }
                       className="ion-no-margin"
                     >
-                      <IonCardHeader>
-                        <IonImg
-                          style={{
-                            width: "64px",
-                            height: "64px",
-                            margin: "0 auto",
-                          }}
-                          src="https://www.freeiconspng.com/thumbs/add-icon-png/add-icon--line-iconset--iconsmind-29.png"
-                        />
-                      </IonCardHeader>
+                     
 
-                      <IonCardContent>
-                        <p className="ion-text-center">More</p>
-                      </IonCardContent>
+                      
                     </IonCard>
                   )}
                 </IonCol>
@@ -230,4 +182,4 @@ const Tab1: React.FC = () => {
   );
 };
 
-export default Tab1;
+export default Selectblockchain;

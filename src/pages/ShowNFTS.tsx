@@ -28,15 +28,20 @@ import {
   squareOutline,
 } from "ionicons/icons";
 import { useEffect, useState } from "react";
-import "./Tab2.css";
+import "./ShowNFTS.css";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-const Tab2: React.FC = () => {
+let chainId: string;
+let row: number;
+
+const ShowNFTS: React.FC = () => {
   const params: any = useParams();
+  const customData = require('../blockchains.json');
+
   useEffect(() => {
     setBlockchainName(params.blockchainName);
-  }, []);
+  }, [[params.blockchain]]);
 
   // console.log(params);
   const [blockchainName, setBlockchainName] = useState("");
@@ -46,6 +51,7 @@ const Tab2: React.FC = () => {
   const [search, setSearch] = useState("");
   const [nfts, setNfts] = useState<any>([]);
   const [isShowingQR, setIsShowingQR] = useState<any>({});
+
 
   const Popover = () => (
     <IonContent className="ion-padding">
@@ -114,34 +120,65 @@ const Tab2: React.FC = () => {
     // const addres = "0xED972ea8ed13DeE21F6ec697820B4961b4988881";
     // const address = "0x8a90cab2b38dba80c64b7734e58ee1db38b8992e";
     // const address = "0xa9EF99546530A6c10333c52ad4b96d79bEd1F3b3";
-    const API_URL = "https://deep-index.moralis.io/api/v2";
-    const { data } = await axios.get(
-      `${API_URL}/${address}/nft?chain=${blockchainName.toLowerCase()}&format=decimal`,
-      {
-        headers: {
-          "X-Api-Key":
-            "4AJJrGmR2jOnZnYf0ASkCO5zDbZy5F8QQhW0vlWT0tfb3CdsR1jPiaOVNchmsV8o",
-        },
+
+
+    /*    let chainId;
+        switch(blockchainName)
+        {
+          case 'ETH': chainId="0x1"; break;
+          case 'Polygon': chainId="0x89"; break;
+          case 'BNB': chainId="0x38"; break;
+          case 'Fantom': chainId="0xfa"; break;
+          case 'Avalanche': chainId="0xa86a"; break;
+          case 'POAP': chainId="xDai"; break;
+          default: chainId="0x1"; break; // Agarra Etherum
+        }
+    
+      */
+
+    //useEffect(() => {
+
+      for (row = 0; row <= customData.length; row++) {
+        if (customData[row].currentSymbol === blockchainName) {
+          chainId = customData[row].chainId;
+          break;
+        }
       }
-    );
 
-    data.result = data.result.map((nft: any) => ({
-      ...nft,
-      metadata: JSON.parse(nft.metadata),
-    }));
+      console.log("ChainId: " + chainId);
+      console.log("Name: " + blockchainName);
 
-    const posts = await Promise.all(
-      data.result.map(async (nft: any) => {
-        return nft;
-      })
-    );
+      const API_URL = "https://deep-index.moralis.io/api/v2/";
+      const { data } = await axios.get(
+        `${API_URL}/${address}/nft?chain=${chainId}&format=decimal`,
+        {
+          headers: {
+            "X-Api-Key": "XUnDBl1fLvCROuwpgxpB645C1VrrjGGwfUDz6NmdJNo97qUCftf3a8TU0DGIu6Yo",
+          },
+        }
+      );
 
-    console.log(posts);
+      data.result = data.result.map((nft: any) => ({
+        ...nft,
+        metadata: JSON.parse(nft.metadata),
+      }));
 
-    console.log(posts);
+      const posts = await Promise.all(
+        data.result.map(async (nft: any) => {
+          return nft;
+        })
+      );
 
-    setNfts(posts);
-    setIsLoading(false);
+      console.log(posts);
+
+      console.log(posts);
+
+
+
+      setNfts(posts);
+      setIsLoading(false);
+
+    //}, [[]]);
   }
 
   function failedLoadImage(tokenUri: string, _nftIndex: number): void {
@@ -155,13 +192,13 @@ const Tab2: React.FC = () => {
     setIsLoading(false);
   }
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>nftReader</IonTitle>
+          <IonTitle>NFT VISOR</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding" fullscreen>
@@ -183,7 +220,7 @@ const Tab2: React.FC = () => {
               </div>
             </IonCol>
             <IonCol className="ion-text-right">
-              {!isSearching && (
+              {/*!isSearching && (
                 <IonIcon
                   size="small"
                   className="ion-margin-start"
@@ -235,7 +272,7 @@ const Tab2: React.FC = () => {
                     ></IonInput>
                   </IonCol>
                 </IonRow>
-              )}
+              )} */}
             </IonCol>
           </IonRow>
         </IonGrid>
@@ -301,4 +338,4 @@ const Tab2: React.FC = () => {
   );
 };
 
-export default Tab2;
+export default ShowNFTS;
