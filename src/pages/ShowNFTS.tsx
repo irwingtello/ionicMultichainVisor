@@ -29,7 +29,7 @@ import {
   searchOutline,
   squareOutline,
 } from "ionicons/icons";
-import { useEffect, useState } from "react";
+import { useEffect, useState , useRef } from "react";
 import "./ShowNFTS.css";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -55,6 +55,11 @@ const ShowNFTS: React.FC = () => {
   const [isShowingQR, setIsShowingQR] = useState<any>({});
 
   const [isFindedNfts, setIsFindedNfts] = useState(true);
+  const [errorText, setErrorText] = useState("");
+
+
+  
+
 
   const Popover = () => (
     <IonContent className="ion-padding">
@@ -116,6 +121,18 @@ const ShowNFTS: React.FC = () => {
   const [roleMsg, setRoleMsg] = useState("");
 
   async function fetchNfts() {
+   
+    if (address.trim().length === 0) {
+      setErrorText("Write the address");
+      setIsFindedNfts(false);
+      setNfts([]);
+      
+      
+      return;
+      
+    }
+    setErrorText("Sorry we don't found yours nfts");
+
     setIsLoading(true);
     setIsFindedNfts(true);
     // const address = "0xb7df44b373a32e1506d23899f85b220528c2cf80";
@@ -175,6 +192,8 @@ const ShowNFTS: React.FC = () => {
         return nft;
       })
     )
+
+
     /*.then((values: any) => {
       setIsFindedNfts(false);
       console.log("Todo mal: " + values);
@@ -183,6 +202,7 @@ const ShowNFTS: React.FC = () => {
       setIsFindedNfts(false);
       console.log("Todo mal: " + error);
     });*/
+
 
     if (posts.length <= 0) {
       setIsFindedNfts(false);
@@ -226,10 +246,11 @@ const ShowNFTS: React.FC = () => {
         <IonGrid>
           <IonRow>
             <IonCol>
-              <div className="text-lg ion-margin-bottom ion-text-justify">
-                <IonInput
+            <div className="text-lg ion-margin-bottom ion-text-justify" >
+                <IonInput 
                   style={{ fontSize: "12px" }}
                   className="ion-no-padding border-bottom-white"
+                 
                   value={address}
                   placeholder="Enter address"
                   onKeyPress={(e: any) => {
@@ -237,12 +258,15 @@ const ShowNFTS: React.FC = () => {
                   }}
                   onIonChange={(e: any) => setAddress(e.detail.value)}
                   autofocus
-                ></IonInput>
-                <IonButton onClick={fetchNfts} >
-                  Search
-                </IonButton>
+                  ></IonInput> 
               </div>
-            </IonCol>
+                  </IonCol>
+                  <IonCol>
+                <IonButton onClick={fetchNfts} className="ion-activatable ripple-parent">
+                  Search
+
+                </IonButton>
+                </IonCol>
             <IonCol className="ion-text-right">
               {/*!isSearching && (
                 <IonIcon
@@ -358,7 +382,7 @@ const ShowNFTS: React.FC = () => {
           </IonRow>
           <IonRow>
 
-            <IonLabel>{isFindedNfts == true ? "" : "Sorry we don't found yours nfts"}</IonLabel>
+            <IonLabel>{isFindedNfts == true ? "" : errorText}</IonLabel>
 
           </IonRow>
         </IonGrid>
