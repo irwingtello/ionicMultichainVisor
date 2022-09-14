@@ -12,6 +12,7 @@ import {
   IonImg,
   IonInput,
   IonItem,
+  IonLabel,
   IonList,
   IonPage,
   IonRow,
@@ -53,6 +54,7 @@ const ShowNFTS: React.FC = () => {
   const [nfts, setNfts] = useState<any>([]);
   const [isShowingQR, setIsShowingQR] = useState<any>({});
 
+  const [isFindedNfts, setIsFindedNfts] = useState(true);
 
   const Popover = () => (
     <IonContent className="ion-padding">
@@ -115,6 +117,7 @@ const ShowNFTS: React.FC = () => {
 
   async function fetchNfts() {
     setIsLoading(true);
+    setIsFindedNfts(true);
     // const address = "0xb7df44b373a32e1506d23899f85b220528c2cf80";
     // const address = "0x55aa13d2549351808b132513a0afce5163658313";
     // const address = "0xd97c7c5c30feba950790d3a6f72d98509499112c";
@@ -139,45 +142,62 @@ const ShowNFTS: React.FC = () => {
 
     //useEffect(() => {
 
-      for (row = 0; row <= customData.length; row++) {
-        if (customData[row].currentSymbol === blockchainName) {
-          chainId = customData[row].chainId;
-          break;
-        }
+    for (row = 0; row <= customData.length; row++) {
+      if (customData[row].currentSymbol === blockchainName) {
+        chainId = customData[row].chainId;
+        break;
       }
+    }
 
-      console.log("ChainId: " + chainId);
-      console.log("Name: " + blockchainName);
+    console.log("ChainId: " + chainId);
+    console.log("Name: " + blockchainName);
 
-      const API_URL = "https://deep-index.moralis.io/api/v2/";
-      const { data } = await axios.get(
-        `${API_URL}/${address}/nft?chain=${chainId}&format=decimal`,
-        {
-          headers: {
-            "X-Api-Key": "XUnDBl1fLvCROuwpgxpB645C1VrrjGGwfUDz6NmdJNo97qUCftf3a8TU0DGIu6Yo",
-          },
-        }
-      );
+    const API_URL = "https://deep-index.moralis.io/api/v2/";
+    const { data } = await axios.get(
+      `${API_URL}/${address}/nft?chain=${chainId}&format=decimal`,
+      {
+        headers: {
+          "X-Api-Key": "XUnDBl1fLvCROuwpgxpB645C1VrrjGGwfUDz6NmdJNo97qUCftf3a8TU0DGIu6Yo",
+        },
+      }
+    );
 
-      data.result = data.result.map((nft: any) => ({
-        ...nft,
-        metadata: JSON.parse(nft.metadata),
-      }));
+    data.result = data.result.map((nft: any) => ({
+      ...nft,
+      metadata: JSON.parse(nft.metadata),
+    }));
 
-      const posts = await Promise.all(
-        data.result.map(async (nft: any) => {
-          return nft;
-        })
-      );
+    setIsFindedNfts(false);
 
-      console.log(posts);
+    const posts = await Promise.all(
+      data.result.map(async (nft: any) => {
+        setIsFindedNfts(true);
+        return nft;
+      })
+    )
+    /*.then((values: any) => {
+      setIsFindedNfts(false);
+      console.log("Todo mal: " + values);
+    })
+    .catch((error: any) => {
+      setIsFindedNfts(false);
+      console.log("Todo mal: " + error);
+    });*/
 
-      console.log(posts);
+    if (posts.length <= 0) {
+      setIsFindedNfts(false);
+    }
 
 
+    console.log(posts);
 
-      setNfts(posts);
-      setIsLoading(false);
+    console.log(posts);
+
+    console.log("Finded: " + isFindedNfts);
+
+
+    setNfts(posts);
+    setIsLoading(false);
 
     //}, [[]]);
   }
@@ -335,6 +355,11 @@ const ShowNFTS: React.FC = () => {
                 </IonCard>
               </IonCol>
             ))}
+          </IonRow>
+          <IonRow>
+
+            <IonLabel>{isFindedNfts == true ? "" : "Sorry we don't found yours nfts"}</IonLabel>
+
           </IonRow>
         </IonGrid>
       </IonContent>
