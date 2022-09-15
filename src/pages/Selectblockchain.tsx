@@ -23,7 +23,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { filterOutline, gridOutline, searchOutline } from "ionicons/icons";
 import { userInfo } from "os";
 import { useRef, useState } from "react";
-import "./Selectblockchain.css";
+import "./SelectBlockchain.css";
 
 interface IBlockchain {
   chainId: string;
@@ -67,7 +67,7 @@ const blockchains: IBlockchain[] = [
   },
 ];
 
-const Selectblockchain: React.FC = () => {
+const SelectBlockchain: React.FC = () => {
   const history = useHistory();
 
   const a: number = 0;
@@ -95,7 +95,7 @@ const Selectblockchain: React.FC = () => {
     
     
     
-    history.push(`/ShowNFTS/${name}`);
+    history.push(`/ShowNfts/${name}`);
 
 
 
@@ -182,4 +182,4 @@ const Selectblockchain: React.FC = () => {
   );
 };
 
-export default Selectblockchain;
+export default SelectBlockchain;

@@ -1,3 +1,9 @@
 .div {
     flex-direction: 'row';
 }
+
+.my-label {
+    font-size: 2em;
+    display: flex;
+    justify-content: center;
+  }

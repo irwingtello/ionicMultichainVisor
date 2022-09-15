@@ -30,14 +30,14 @@ import {
   squareOutline,
 } from "ionicons/icons";
 import { useEffect, useState , useRef } from "react";
-import "./ShowNFTS.css";
+import "./ShowNfts.css";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
 let chainId: string;
 let row: number;
 
-const ShowNFTS: React.FC = () => {
+const ShowNfts: React.FC = () => {
   const params: any = useParams();
   const customData = require('../blockchains.json');
 
@@ -170,7 +170,8 @@ const ShowNFTS: React.FC = () => {
     console.log("Name: " + blockchainName);
 
     const API_URL = "https://deep-index.moralis.io/api/v2/";
-    const { data } = await axios.get(
+    try{
+    const { data}  = await axios.get(
       `${API_URL}/${address}/nft?chain=${chainId}&format=decimal`,
       {
         headers: {
@@ -178,7 +179,6 @@ const ShowNFTS: React.FC = () => {
         },
       }
     );
-
     data.result = data.result.map((nft: any) => ({
       ...nft,
       metadata: JSON.parse(nft.metadata),
@@ -193,25 +193,10 @@ const ShowNFTS: React.FC = () => {
       })
     )
 
-
-    /*.then((values: any) => {
-      setIsFindedNfts(false);
-      console.log("Todo mal: " + values);
-    })
-    .catch((error: any) => {
-      setIsFindedNfts(false);
-      console.log("Todo mal: " + error);
-    });*/
-
-
     if (posts.length <= 0) {
       setIsFindedNfts(false);
     }
 
-
-    console.log(posts);
-
-    console.log(posts);
 
     console.log("Finded: " + isFindedNfts);
 
@@ -219,6 +204,13 @@ const ShowNFTS: React.FC = () => {
     setNfts(posts);
     setIsLoading(false);
 
+    }
+    catch({error})
+    {
+        setIsFindedNfts(false);
+    }
+
+    let data =[];
     //}, [[]]);
   }
 
@@ -382,7 +374,7 @@ const ShowNFTS: React.FC = () => {
           </IonRow>
           <IonRow>
 
-            <IonLabel>{isFindedNfts == true ? "" : errorText}</IonLabel>
+            <IonLabel color="danger" className="my-label">{isFindedNfts == true ? "" :errorText }</IonLabel>
 
           </IonRow>
         </IonGrid>
@@ -391,4 +383,4 @@ const ShowNFTS: React.FC = () => {
   );
 };
 
-export default ShowNFTS;
+export default ShowNfts;
