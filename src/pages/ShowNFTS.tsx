@@ -30,7 +30,7 @@ import {
   squareOutline,
 } from "ionicons/icons";
 import { useEffect, useState, useRef } from "react";
-import "./ShowNfts.css";
+import "./ShowNFTS.css";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
@@ -143,6 +143,9 @@ const ShowNfts: React.FC = () => {
           posts = await Promise.all(
             data.result.map(async (nft: any) => {
               setIsFindedNfts(true);
+             
+         
+
               return nft;
             })
           );
@@ -151,7 +154,7 @@ const ShowNfts: React.FC = () => {
           posts = await Promise.all(
             data.map(async (nft: any) => {
               setIsFindedNfts(true);
-              nft.chain = chainId;
+              nft.chain = nft.event.chainId;
               nft.image = nft.event.image_url;
               nft.nftId = nft.event.id;
               nft.fancy_id = nft.event.fancy_id;
@@ -246,13 +249,8 @@ const ShowNfts: React.FC = () => {
                         </div>
                       ) : (
                         <IonImg
-                          onClick={() =>
-                            setIsShowingQR({
-                              ...isShowingQR,
-                              [nft.token_hash]: true,
-                            })
-                          }
-                          onIonImgDidLoad={console.log}
+                         
+                       onIonImgDidLoad={console.log}
                           onIonError={() =>
                             failedLoadImage(nft.image, nftIndex)
                           }
@@ -279,35 +277,45 @@ const ShowNfts: React.FC = () => {
                 <IonCol size="12" key={nftIndex}>
                   <IonCard className="ion-no-margin">
                     <IonCardHeader>
-                      {isLoading ? (
+                     
+                      
+                    </IonCardHeader>
+                    <IonCardContent>
+                    <div className="div-flex" > 
+                    <table>
+                    <tr>
+                      <td className="td-padding-right">
+                    {isLoading ? (
+                    
                         <div className="ion-text-center">
                           <IonIcon size="large" icon={heart}></IonIcon>
                         </div>
                       ) : (
                         <IonImg
-                          onClick={() =>
-                            setIsShowingQR({
-                              ...isShowingQR,
-                              [nft.token_hash]: true,
-                            })
-                          }
+                         
                           onIonImgDidLoad={console.log}
                           onIonError={() =>
                             failedLoadImage(nft.token_uri, nftIndex)
                           }
                           style={{
-                            width: "128px",
-                            height: "128px",
-                            margin: "0 auto",
+                            width: "228px",
+                            height: "228px",
+                            margin: "1 auto",
+                         
                           }}
                           src={nft.metadata?.image}
                         />
+
+                        
                       )}
-                    </IonCardHeader>
-                    <IonCardContent>
-                      <div className="div-flex">
+
+                    </td>
+
+                    <td >
+                    
+                      
                         <table className="table-flex">
-                          <tr><td className="td-right"><p className="p-font">Chain: </p></td><td className="td-left"><p>{nft?.chain}</p></td></tr>
+                          <tr><td className="td-right"> <p className="p-font">Chain: </p></td><td className="td-left"><p>{nft?.chain}</p></td></tr>
                           <tr><td className="td-right"><p className="p-font">Contract Type: </p></td><td className="td-left"><p>{nft?.contract_type}</p></td></tr>
                           <tr><td className="td-right"><p className="p-font">Token Id: </p></td><td className="td-left"><p>{nft?.token_id}</p></td></tr>
                           <tr><td className="td-right"><p className="p-font">Owner of: </p></td><td className="td-left"><p>{nft?.owner_of}</p></td></tr>
@@ -318,6 +326,10 @@ const ShowNfts: React.FC = () => {
                           <tr><td className="td-right"><p className="p-font">Last Token Uri Sync: </p></td><td className="td-left"><p>{nft?.last_token_uri_sync}</p></td></tr>
                           <tr><td className="td-right"><p className="p-font">Last Metadata Sync: </p></td><td className="td-left"><p>{nft?.last_metadata_sync }</p></td></tr>
                         </table>
+                        </td>
+                        </tr>
+                        </table>
+
                       </div>
                     </IonCardContent>
                   </IonCard>

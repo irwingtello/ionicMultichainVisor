@@ -12,7 +12,7 @@ import {
 import { IonReactRouter } from "@ionic/react-router";
 import { informationOutline, bookOutline, globeOutline } from "ionicons/icons";
 import SelectBlockchain from "./pages/SelectBlockchain";
-import ShowNfts from "./pages/ShowNfts";
+import ShowNfts from "./pages/ShowNFTS";
 import About from "./pages/About";
 
 /* Core CSS required for Ionic components to work properly */
