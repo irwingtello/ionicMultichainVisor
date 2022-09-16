@@ -1,4 +1,5 @@
 import "./ExploreContainer.css";
+import { IonButton, IonRouterLink } from "@ionic/react";
 
 interface ContainerProps {
   name: string;
@@ -6,8 +7,11 @@ interface ContainerProps {
 
 const ExploreContainer: React.FC<ContainerProps> = ({ name }) => {
   return (
-    <div className="container">
-      <div>center things</div>
+    <div className="container" style={{}}>
+      <IonRouterLink className="ionButton" color="dark" href="https://www.dfhcommunity.com/nftvisorPrivacyPolicy">
+        Privacy Policy
+      </IonRouterLink>
+
     </div>
   );
 };

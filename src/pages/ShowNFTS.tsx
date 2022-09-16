@@ -29,7 +29,7 @@ import {
   searchOutline,
   squareOutline,
 } from "ionicons/icons";
-import { useEffect, useState , useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./ShowNfts.css";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -58,7 +58,7 @@ const ShowNfts: React.FC = () => {
   const [errorText, setErrorText] = useState("");
 
 
-  
+
 
 
   const Popover = () => (
@@ -91,26 +91,6 @@ const ShowNfts: React.FC = () => {
           </IonCol>
         </IonRow>
       </IonGrid>
-      {/* <IonList>
-        <IonItem className="ios-text-center">
-          <IonIcon icon={squareOutline}></IonIcon>
-        </IonItem>
-        <IonItem>
-          <IonIcon icon={squareOutline}></IonIcon>
-          <IonIcon icon={squareOutline}></IonIcon>
-        </IonItem>
-        <IonItem>
-          <IonIcon icon={squareOutline}></IonIcon>
-          <IonIcon icon={squareOutline}></IonIcon>
-          <IonIcon icon={squareOutline}></IonIcon>
-        </IonItem>
-        <IonItem>
-          <IonIcon icon={squareOutline}></IonIcon>
-          <IonIcon icon={squareOutline}></IonIcon>
-          <IonIcon icon={squareOutline}></IonIcon>
-          <IonIcon icon={squareOutline}></IonIcon>
-        </IonItem>
-      </IonList> */}
     </IonContent>
   );
 
@@ -121,97 +101,82 @@ const ShowNfts: React.FC = () => {
   const [roleMsg, setRoleMsg] = useState("");
 
   async function fetchNfts() {
-   
+
+    // valida input vacío
     if (address.trim().length === 0) {
       setErrorText("Write the address");
       setIsFindedNfts(false);
       setNfts([]);
-      
-      
-      return;
-      
     }
-    setErrorText("Sorry we don't found yours nfts");
-
-    setIsLoading(true);
-    setIsFindedNfts(true);
-    // const address = "0xb7df44b373a32e1506d23899f85b220528c2cf80";
-    // const address = "0x55aa13d2549351808b132513a0afce5163658313";
-    // const address = "0xd97c7c5c30feba950790d3a6f72d98509499112c";
-    // const addres = "0xED972ea8ed13DeE21F6ec697820B4961b4988881";
-    // const address = "0x8a90cab2b38dba80c64b7734e58ee1db38b8992e";
-    // const address = "0xa9EF99546530A6c10333c52ad4b96d79bEd1F3b3";
-
-
-    /*    let chainId;
-        switch(blockchainName)
-        {
-          case 'ETH': chainId="0x1"; break;
-          case 'Polygon': chainId="0x89"; break;
-          case 'BNB': chainId="0x38"; break;
-          case 'Fantom': chainId="0xfa"; break;
-          case 'Avalanche': chainId="0xa86a"; break;
-          case 'POAP': chainId="xDai"; break;
-          default: chainId="0x1"; break; // Agarra Etherum
+    else {
+      setIsLoading(true);
+      // Busca cual blockchain llegó por URL
+      for (row = 0; row <= customData.length; row++) {
+        if (customData[row].currentSymbol === blockchainName) {
+          chainId = customData[row].chainId;
+          break;
         }
-    
-      */
-
-    //useEffect(() => {
-
-    for (row = 0; row <= customData.length; row++) {
-      if (customData[row].currentSymbol === blockchainName) {
-        chainId = customData[row].chainId;
-        break;
       }
-    }
 
-    console.log("ChainId: " + chainId);
-    console.log("Name: " + blockchainName);
+      let API_URL = (chainId == 'xDai') ? "https://frontend.poap.tech/actions/scan/" : "https://deep-index.moralis.io/api/v2/";
+      const API_KEY = 'XUnDBl1fLvCROuwpgxpB645C1VrrjGGwfUDz6NmdJNo97qUCftf3a8TU0DGIu6Yo';
+      let URL = (chainId == 'xDai') ?
+        `${API_URL}${address}` :
+        `${API_URL}/${address}/nft?chain=${chainId}&format=decimal`;
+      try {
+        const { data } = await axios.get(
+          URL,
+          {
+            headers: {
+              'X-Api-Key': API_KEY,
+            },
+          }
+        );
 
-    const API_URL = "https://deep-index.moralis.io/api/v2/";
-    try{
-    const { data}  = await axios.get(
-      `${API_URL}/${address}/nft?chain=${chainId}&format=decimal`,
-      {
-        headers: {
-          "X-Api-Key": "XUnDBl1fLvCROuwpgxpB645C1VrrjGGwfUDz6NmdJNo97qUCftf3a8TU0DGIu6Yo",
-        },
+        let posts = [];
+        if (chainId != 'xDai') {
+          data.result = data.result.map((nft: any) => ({
+            ...nft,
+            metadata: JSON.parse(nft.metadata),
+          }));
+
+          posts = await Promise.all(
+            data.result.map(async (nft: any) => {
+              setIsFindedNfts(true);
+              return nft;
+            })
+          );
+        }
+        else {
+          posts = await Promise.all(
+            data.map(async (nft: any) => {
+              setIsFindedNfts(true);
+              nft.chain = chainId;
+              nft.image = nft.event.image_url;
+              nft.nftId = nft.event.id;
+              nft.fancy_id = nft.event.fancy_id;
+              nft.year = nft.event.year;
+              nft.start_date = nft.event.start_date;
+              nft.end_date = nft.event.end_date;
+              return nft;
+            })
+          );
+
+        }
+        if (posts.length <= 0) {
+          setErrorText("Sorry we don't found yours nfts");
+          setIsFindedNfts(false);
+        }
+
+        setNfts(posts);
+        setIsLoading(false);
+
       }
-    );
-    data.result = data.result.map((nft: any) => ({
-      ...nft,
-      metadata: JSON.parse(nft.metadata),
-    }));
+      catch ({ error }) {
 
-    setIsFindedNfts(false);
-
-    const posts = await Promise.all(
-      data.result.map(async (nft: any) => {
-        setIsFindedNfts(true);
-        return nft;
-      })
-    )
-
-    if (posts.length <= 0) {
-      setIsFindedNfts(false);
-    }
-
-
-    console.log("Finded: " + isFindedNfts);
-
-
-    setNfts(posts);
-    setIsLoading(false);
-
-    }
-    catch({error})
-    {
         setIsFindedNfts(false);
+      }
     }
-
-    let data =[];
-    //}, [[]]);
   }
 
   function failedLoadImage(tokenUri: string, _nftIndex: number): void {
@@ -236,13 +201,13 @@ const ShowNfts: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding" fullscreen>
         <IonGrid>
-          <IonRow>
-            <IonCol>
-            <div className="text-lg ion-margin-bottom ion-text-justify" >
-                <IonInput 
-                  style={{ fontSize: "12px" }}
+          <IonRow class="row-class">
+            <IonCol class="cell-class">
+              <div className="text-lg ion-margin-bottom ion-text-justify">
+                <IonInput
+                  style={{ fontSize: "12px", width: '100%' }}
                   className="ion-no-padding border-bottom-white"
-                 
+
                   value={address}
                   placeholder="Enter address"
                   onKeyPress={(e: any) => {
@@ -250,132 +215,118 @@ const ShowNfts: React.FC = () => {
                   }}
                   onIonChange={(e: any) => setAddress(e.detail.value)}
                   autofocus
-                  ></IonInput> 
+                ></IonInput>
               </div>
-                  </IonCol>
-                  <IonCol>
-                <IonButton onClick={fetchNfts} className="ion-activatable ripple-parent">
-                  Search
-
-                </IonButton>
-                </IonCol>
-            <IonCol className="ion-text-right">
-              {/*!isSearching && (
-                <IonIcon
-                  size="small"
-                  className="ion-margin-start"
-                  icon={gridOutline}
-                  onClick={(e: any) =>
-                    present({
-                      event: e,
-                      onDidDismiss: (e: CustomEvent) =>
-                        setRoleMsg(
-                          `Popover dismissed with role: ${e.detail.role}`
-                        ),
-                    })
-                  }
-                />
-              )}
-              {!isSearching && (
-                <IonIcon
-                  size="small"
-                  className="ion-margin-start"
-                  icon={filterOutline}
-                />
-              )}
-              {!isSearching && (
-                <IonIcon
-                  size="small"
-                  className="ion-margin-start"
-                  icon={searchOutline}
-                  onClick={() => setIsSearching(true)}
-                />
-              )}
-              {isSearching && (
-                <IonRow className="ion-align-items-center">
-                  <IonCol class="ion-no-padding" size="4">
-                    <IonIcon
-                      size="small"
-                      className="ion-margin-end"
-                      icon={searchOutline}
-                      onClick={() => setIsSearching(false)}
-                    />
-                  </IonCol>
-                  <IonCol class="ion-no-padding" size="8">
-                    <IonInput
-                      style={{ fontSize: "12px" }}
-                      className="ion-no-padding border-bottom-white"
-                      value={search}
-                      placeholder="Search"
-                      onIonChange={(e: any) => setSearch(e.detail.value)}
-                      autofocus
-                    ></IonInput>
-                  </IonCol>
-                </IonRow>
-              )} */}
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            {/*Button Search */}
+            <IonCol class="cell-class cell-align cell-buttons-size ">
+              <IonButton onClick={fetchNfts} color="primary" className="ion-activatable ripple-parent" style={{}}>
+                Search
+              </IonButton>
+              {/*Button Save */}
+              <IonButton onClick={fetchNfts} color="light" className="ion-activatable ripple-parent">
+                Save
+              </IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>
         <IonGrid>
           <IonRow>
-            {nfts.map((nft: any, nftIndex: number) => (
-              <IonCol size="6" key={nftIndex}>
-                <IonCard className="ion-no-margin">
-                  <IonCardHeader>
-                    {isLoading ? (
-                      <div className="ion-text-center">
-                        <IonIcon size="large" icon={heart}></IonIcon>
+            {chainId == 'xDai' ?    // Caso POAP
+              //
+              nfts.map((nft: any, nftIndex: number) => (
+                <IonCol size="6" key={nftIndex}>
+                  <IonCard className="ion-no-margin">
+                    <IonCardHeader>
+                      {isLoading ? (
+                        <div className="ion-text-center">
+                          <IonIcon size="large" icon={heart}></IonIcon>
+                        </div>
+                      ) : (
+                        <IonImg
+                          onClick={() =>
+                            setIsShowingQR({
+                              ...isShowingQR,
+                              [nft.token_hash]: true,
+                            })
+                          }
+                          onIonImgDidLoad={console.log}
+                          onIonError={() =>
+                            failedLoadImage(nft.image, nftIndex)
+                          }
+                          style={{
+                            width: "128px",
+                            height: "128px",
+                            margin: "0 auto",
+                          }}
+                          src={nft?.image}
+                        />
+                      )}
+                    </IonCardHeader>
+                    <IonCardContent>
+                      <p className="ion-text-center">
+                        {nft?.fancy_id}
+                      </p>
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
+              ))
+              //
+              : // Caso genérico 
+              nfts.map((nft: any, nftIndex: number) => (
+                <IonCol size="12" key={nftIndex}>
+                  <IonCard className="ion-no-margin">
+                    <IonCardHeader>
+                      {isLoading ? (
+                        <div className="ion-text-center">
+                          <IonIcon size="large" icon={heart}></IonIcon>
+                        </div>
+                      ) : (
+                        <IonImg
+                          onClick={() =>
+                            setIsShowingQR({
+                              ...isShowingQR,
+                              [nft.token_hash]: true,
+                            })
+                          }
+                          onIonImgDidLoad={console.log}
+                          onIonError={() =>
+                            failedLoadImage(nft.token_uri, nftIndex)
+                          }
+                          style={{
+                            width: "128px",
+                            height: "128px",
+                            margin: "0 auto",
+                          }}
+                          src={nft.metadata?.image}
+                        />
+                      )}
+                    </IonCardHeader>
+                    <IonCardContent>
+                      <div className="div-flex">
+                        <table className="table-flex">
+                          <tr><td className="td-right"><p className="p-font">Chain: </p></td><td className="td-left"><p>{nft?.chain}</p></td></tr>
+                          <tr><td className="td-right"><p className="p-font">Contract Type: </p></td><td className="td-left"><p>{nft?.contract_type}</p></td></tr>
+                          <tr><td className="td-right"><p className="p-font">Token Id: </p></td><td className="td-left"><p>{nft?.token_id}</p></td></tr>
+                          <tr><td className="td-right"><p className="p-font">Owner of: </p></td><td className="td-left"><p>{nft?.owner_of}</p></td></tr>
+                          <tr><td className="td-right"><p className="p-font">Token Address: </p></td><td className="td-left"><p>{nft?.token_address}</p></td></tr>
+                          <tr><td className="td-right"><p className="p-font">Block number: </p></td><td className="td-left"><p>{nft?.block_number}</p></td></tr>
+                          <tr><td className="td-right"><p className="p-font">Block number minted: </p></td><td className="td-left"><p>{nft?.block_number_minted}</p></td></tr>
+                          <tr><td className="td-right"><p className="p-font">Token Hash: </p></td><td className="td-left"><p>{nft?.token_hash}</p></td></tr>
+                          <tr><td className="td-right"><p className="p-font">Last Token Uri Sync: </p></td><td className="td-left"><p>{nft?.last_token_uri_sync}</p></td></tr>
+                          <tr><td className="td-right"><p className="p-font">Last Metadata Sync: </p></td><td className="td-left"><p>{nft?.last_metadata_sync }</p></td></tr>
+                        </table>
                       </div>
-                    ) : isShowingQR[nft.token_hash] ? (
-                      <div
-                        style={{
-                          width: "128px",
-                          height: "128px",
-                          margin: "0 auto",
-                        }}
-                        onClick={() =>
-                          setIsShowingQR({
-                            ...isShowingQR,
-                            [nft.token_hash]: false,
-                          })
-                        }
-                      >
-                        <QRCodeSVG value={nft.token_hash} />
-                      </div>
-                    ) : (
-                      <IonImg
-                        onClick={() =>
-                          setIsShowingQR({
-                            ...isShowingQR,
-                            [nft.token_hash]: true,
-                          })
-                        }
-                        onIonImgDidLoad={console.log}
-                        onIonError={() =>
-                          failedLoadImage(nft.token_uri, nftIndex)
-                        }
-                        style={{
-                          width: "128px",
-                          height: "128px",
-                          margin: "0 auto",
-                        }}
-                        src={nft.metadata?.image}
-                      />
-                    )}
-                  </IonCardHeader>
-                  <IonCardContent>
-                    <p className="ion-text-center">
-                      {nft.name} - {nft.metadata?.name}
-                    </p>
-                  </IonCardContent>
-                </IonCard>
-              </IonCol>
-            ))}
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
+              ))
+            }
           </IonRow>
           <IonRow>
-
-            <IonLabel color="danger" className="my-label">{isFindedNfts == true ? "" :errorText }</IonLabel>
-
+            <IonLabel color="danger" className="my-label">{isFindedNfts == true ? "" : errorText}</IonLabel>
           </IonRow>
         </IonGrid>
       </IonContent>

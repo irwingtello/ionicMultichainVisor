@@ -6,4 +6,76 @@
     font-size: 2em;
     display: flex;
     justify-content: center;
-  }
+}
+
+
+.div-flex {
+    display: flex;
+}
+
+.table-flex {
+    flex: 1;
+}
+
+.td-right {
+    text-align: right;
+    align-items: right;
+    align-self: right;
+    align-content: right;
+    align-tracks: right;
+    width: 35%;
+
+    /*border-color: white;
+    border-width: .01em;
+    border-style: solid;
+    margin-bottom: -1px;*/
+}
+
+.p-font{
+    font-weight: bold;
+}
+
+
+
+.td-left {
+    text-align: left;
+    align-items: left;
+    align-self: left;
+    align-content: left;
+    align-tracks: left;
+    width: 65%;
+
+    /*border-color: white;
+    border-width: .01em;
+    border-style: solid;
+    margin-bottom: -1px;*/
+}
+
+
+
+/*
+.cell-class {
+    border-color: white;
+    border-width: .01em;
+    border-style: solid;
+    margin-bottom: -1px;
+    /*background-color: lightgrey
+}
+*/
+
+.cell-align {
+    align-items: stretch;
+}
+
+.cell-buttons-size {
+    size: 0ch;
+}
+
+.row-class {
+    /*border-color: white;
+    border-width: .01em;
+    border-style: solid;
+    margin-bottom: -1px;
+    */
+    flex-direction: "row";
+}
