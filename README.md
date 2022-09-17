@@ -2,7 +2,7 @@ License: Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
 
 Clauses:
 
-1.- For anyone using the code, the [url]dfhcommunity.com logo and website must be clearly displayed on the application/website where the code is used.
+1.- For anyone using the code, the <a href="https://www.dfhcommunity.com">dfhcommunity.com</a> logo and website must be clearly displayed on the application/website where the code is used.
 
 2.- If you decide to use a multichain visor feature for your app, it should remain free and open source.
 
