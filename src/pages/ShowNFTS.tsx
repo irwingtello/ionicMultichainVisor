@@ -137,7 +137,8 @@ const ShowNfts: React.FC = () => {
         if (chainId != 'xDai') {
           data.result = data.result.map((nft: any) => ({
             ...nft,
-            metadata: JSON.parse(nft.metadata),
+            chain: chainId,
+            metadata: JSON.parse(nft.metadata)
           }));
 
           posts = await Promise.all(
@@ -154,7 +155,7 @@ const ShowNfts: React.FC = () => {
           posts = await Promise.all(
             data.map(async (nft: any) => {
               setIsFindedNfts(true);
-              nft.chain = nft.event.chainId;
+              nft.chain = chainId;
               nft.image = nft.event.image_url;
               nft.nftId = nft.event.id;
               nft.fancy_id = nft.event.fancy_id;
@@ -282,9 +283,9 @@ const ShowNfts: React.FC = () => {
                     </IonCardHeader>
                     <IonCardContent>
                     <div className="div-flex" > 
-                    <table>
-                    <tr>
-                      <td className="td-padding-right">
+                    <IonGrid>
+                    <IonRow>
+                      <IonRow className="td-padding-right">
                     {isLoading ? (
                     
                         <div className="ion-text-center">
@@ -300,7 +301,7 @@ const ShowNfts: React.FC = () => {
                           style={{
                             width: "228px",
                             height: "228px",
-                            margin: "1 auto",
+                            margin: "25 auto",
                          
                           }}
                           src={nft.metadata?.image}
@@ -309,26 +310,46 @@ const ShowNfts: React.FC = () => {
                         
                       )}
 
-                    </td>
+                    </IonRow>
 
-                    <td >
+                    <IonCol>
                     
                       
-                        <table className="table-flex">
-                          <tr><td className="td-right"> <p className="p-font">Chain: </p></td><td className="td-left"><p>{nft?.chain}</p></td></tr>
-                          <tr><td className="td-right"><p className="p-font">Contract Type: </p></td><td className="td-left"><p>{nft?.contract_type}</p></td></tr>
-                          <tr><td className="td-right"><p className="p-font">Token Id: </p></td><td className="td-left"><p>{nft?.token_id}</p></td></tr>
-                          <tr><td className="td-right"><p className="p-font">Owner of: </p></td><td className="td-left"><p>{nft?.owner_of}</p></td></tr>
-                          <tr><td className="td-right"><p className="p-font">Token Address: </p></td><td className="td-left"><p>{nft?.token_address}</p></td></tr>
-                          <tr><td className="td-right"><p className="p-font">Block number: </p></td><td className="td-left"><p>{nft?.block_number}</p></td></tr>
-                          <tr><td className="td-right"><p className="p-font">Block number minted: </p></td><td className="td-left"><p>{nft?.block_number_minted}</p></td></tr>
-                          <tr><td className="td-right"><p className="p-font">Token Hash: </p></td><td className="td-left"><p>{nft?.token_hash}</p></td></tr>
-                          <tr><td className="td-right"><p className="p-font">Last Token Uri Sync: </p></td><td className="td-left"><p>{nft?.last_token_uri_sync}</p></td></tr>
-                          <tr><td className="td-right"><p className="p-font">Last Metadata Sync: </p></td><td className="td-left"><p>{nft?.last_metadata_sync }</p></td></tr>
-                        </table>
-                        </td>
-                        </tr>
-                        </table>
+                    <IonGrid className="table-flex">
+                    <IonRow> 
+                      <IonCol className="td-right"> Chain: <IonCol className="td-left">{nft?.chain}</IonCol></IonCol> 
+                      </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-right">Contract Type: <IonCol className="td-left">{nft?.contract_type}</IonCol></IonCol>
+                       </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-right">Token Id:<IonCol className="td-left">{nft?.token_id}</IonCol></IonCol> 
+                      </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-right">Owner of: <IonCol className="td-left">{nft?.owner_of}</IonCol></IonCol>
+                      </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-right">Token Address: <IonCol className="td-left">{nft?.token_address}</IonCol></IonCol>
+                      </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-right">Block number: <IonCol className="td-left">{nft?.block_number}</IonCol></IonCol>
+                      </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-right">Block number minted: <IonCol className="td-left">{nft?.block_number_minted}</IonCol></IonCol>
+                      </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-right">Token Hash: <IonCol className="td-left">{nft?.token_hash}</IonCol></IonCol>
+                      </IonRow>
+                    <IonRow>
+                      <IonCol className="td-right">Last Token Uri Sync:<IonCol className="td-left">{nft?.last_token_uri_sync}</IonCol></IonCol>
+                      </IonRow>
+                    <IonRow>
+                      <IonCol className="td-right">Last Metadata Sync: <IonCol className="td-left">{nft?.last_metadata_sync }</IonCol></IonCol>
+                      </IonRow>
+                        </IonGrid>
+                        </IonCol>
+                        </IonRow>
+                        </IonGrid> 
 
                       </div>
                     </IonCardContent>

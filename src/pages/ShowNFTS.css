@@ -23,11 +23,13 @@
 }
 
 .td-right {
-    text-align: right;
-    align-items: right;
-    align-self: right;
-    align-content: right;
-    align-tracks: right;
+    text-align: left;
+    align-items: left;
+    align-self: left;
+    align-content: left;
+    align-tracks: left;
+    color: rgb(87, 87, 87);
+    font-weight: bold;
     
 
     /*border-color: white;
@@ -39,6 +41,7 @@
 .p-font{
     font-weight: bold;
     color: rgb(87, 87, 87);
+    
 }
 
 
@@ -51,6 +54,8 @@
     align-tracks: left;
     width: 65%;
     color: rgb(6, 40, 231);
+    font-weight: bold;
+    padding-left: 0px;
 
     /*border-color: white;
     border-width: .01em;
@@ -97,7 +102,10 @@
 
 .td-padding-right{
 
-    padding-right: 20px;
+    padding-right: 30px;
 
 
 }
+
+
+
