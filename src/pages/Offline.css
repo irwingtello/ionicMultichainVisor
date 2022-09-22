@@ -1,0 +1,13 @@
+.row-class {
+    /*border-color: white;
+    border-width: .01em;
+    border-style: solid;
+    margin-bottom: -1px;
+    */
+    flex-direction: "row";
+}
+
+.ionSelect
+{
+    width: '50%'
+}

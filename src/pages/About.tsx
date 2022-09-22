@@ -7,7 +7,7 @@ const About: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>About</IonTitle>
+          <IonTitle>NFT VISOR</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
