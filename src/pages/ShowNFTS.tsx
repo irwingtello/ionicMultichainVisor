@@ -58,6 +58,7 @@ const ShowNfts: React.FC = () => {
   const [errorText, setErrorText] = useState("");
 
 
+  
 
 
 
@@ -209,7 +210,7 @@ const ShowNfts: React.FC = () => {
             <IonCol class="cell-class">
               <div className="text-lg ion-margin-bottom ion-text-justify">
                 <IonInput
-                  style={{ fontSize: "12px", width: '100%' }}
+                  style={{ fontSize: "15px", width: '100%' }}
                   className="ion-no-padding border-bottom-white"
 
                   value={address}
@@ -237,43 +238,224 @@ const ShowNfts: React.FC = () => {
           </IonRow>
         </IonGrid>
         <IonGrid>
+        <div className="Mobile">
           <IonRow>
-            {chainId == 'xDai' ?    // Caso POAP
-              //
-              nfts.map((nft: any, nftIndex: number) => (
-                <IonCol size="6" key={nftIndex}>
-                  <IonCard className="ion-no-margin">
-                    <IonCardHeader>
+              {chainId == 'xDai' ?    // Caso POAPMovil
+                //
+                nfts.map((nft: any, nftIndex: number) => (
+                  <IonCol size="12" key={nftIndex}>
+                    <IonCard className="ion-no-marginMovil">
+                      <IonCardHeader>
+                     
+                        
+                      </IonCardHeader>
+                      <IonCardContent>
+                      <div className="div-flexMovil" id="Movil"> 
+                      <IonGrid >
+                      <IonRow>
+                        <IonRow className="imageMovil">
                       {isLoading ? (
-                        <div className="ion-text-center">
-                          <IonIcon size="large" icon={heart}></IonIcon>
-                        </div>
-                      ) : (
-                        <IonImg
-                         
-                       onIonImgDidLoad={console.log}
+                      
+                          <div className="ion-text-centerMovil">
+                            <IonIcon size="large" icon={heart}></IonIcon>
+                          </div>
+                        ) : (
+                        
+                          <IonImg className="imageMovil"
+                          
+                          onIonImgDidLoad={console.log}
                           onIonError={() =>
                             failedLoadImage(nft.image, nftIndex)
                           }
-                          style={{
-                            width: "128px",
-                            height: "128px",
-                            margin: "0 auto",
-                          }}
-                          src={nft?.image}
-                        />
-                      )}
-                    </IonCardHeader>
-                    <IonCardContent>
-                      <p className="ion-text-center">
-                        {nft?.fancy_id}
-                      </p>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
-              ))
+                            style={{
+                              width: "228px",
+                              height: "228px",
+                              margin: "5 auto",
+                          
+                            }}
+                            
+                            src={nft?.image}
+                          />
+
+                          
+                        )}
+
+                      </IonRow>
+
+                      <IonCol>
+                      
+                        
+                      
+                        
+                      <IonGrid className="table-flex">
+                      <IonRow> 
+                        <IonCol className="td-left"> Chain: <IonCol className="td-right">{nft?.chain}</IonCol></IonCol> 
+                        </IonRow>
+                      <IonRow> 
+                        <IonCol className="td-left">Contract Type: <IonCol className="td-right">POAP</IonCol></IonCol>
+                        </IonRow>
+                      <IonRow> 
+                        <IonCol className="td-left">Token Id:<IonCol className="td-right">{nft?.tokenId}</IonCol></IonCol> 
+                        </IonRow>
+                      <IonRow> 
+                        <IonCol className="td-left" size="12">Owner of:</IonCol>
+                      </IonRow>
+                      <IonRow> 
+                      <IonCol className="td-left1" size="12">{nft?.owner}</IonCol>
+                      </IonRow>
+                      <IonRow> 
+                        <IonCol className="td-left">Block number: <IonCol className="td-right">NA</IonCol></IonCol>
+                        </IonRow>
+                      <IonRow> 
+                        <IonCol className="td-left">Block number minted: <IonCol className="td-right">NA</IonCol></IonCol>
+                        </IonRow>
+                      <IonRow> 
+                        <IonCol className="td-left">Token Hash: <IonCol className="td-right">NA</IonCol></IonCol>
+                        </IonRow>
+                      <IonRow>
+                        <IonCol className="td-left">Last Token Uri Sync:<IonCol className="td-right">NA</IonCol></IonCol>
+                        </IonRow>
+                      <IonRow>
+                        <IonCol className="td-left">Last Metadata Sync: <IonCol className="td-right">NA</IonCol></IonCol>
+                        </IonRow>
+                          </IonGrid>
+                          </IonCol>
+                          </IonRow>
+                          </IonGrid> 
+
+                        </div>
+                      </IonCardContent>
+                    </IonCard>
+                  </IonCol>
+                ))              
+                
+                //
+                : // Caso genéricoMovil
+                nfts.map((nft: any, nftIndex: number) => (
+                  <IonCol size="12" key={nftIndex}>
+                    <IonCard className="ion-no-marginMovil">
+                      <IonCardHeader>
+                   
+                        
+                      </IonCardHeader>
+                      <IonCardContent>
+                      <div className="div-flexMovil" id="Movil"> 
+                      <IonGrid >
+                      <IonRow>
+                        <IonRow className="imageMovil">
+                      {isLoading ? (
+                      
+                          <div className="ion-text-center">
+                            <IonIcon size="large" icon={heart}></IonIcon>
+                          </div>
+                        ) : (
+                        
+                          <IonImg className="imageMovil"
+                          
+                          
+                            onIonImgDidLoad={console.log}
+                            onIonError={() =>
+                              failedLoadImage(nft.token_uri, nftIndex)
+                            }
+                            style={{
+                              width: "228px",
+                              height: "228px",
+                              margin: "5 auto",
+                          
+                            }}
+                            src={nft.metadata?.image}
+                          />
+
+                          
+                        )}
+
+                      </IonRow>
+
+                      <IonCol>
+                      
+                        
+                      <IonGrid className="table-flex">
+                      <IonRow> 
+                        <IonCol className="td-left"> Chain: </IonCol> 
+                        </IonRow>
+                        <IonCol className="td-left1">{nft?.chain}</IonCol> 
+                      
+                      <IonRow> 
+                        <IonCol className="td-left" size="12">Contract Type: </IonCol>
+                        <IonCol className="td-left1" size="12">{nft?.contract_type}</IonCol>
+                        </IonRow>
+                        
+                      <IonRow> 
+                        <IonCol className="td-left" size="12">Token Id:</IonCol> 
+                        </IonRow>
+                        <IonRow>
+                        <IonCol className="td-left1" size="12">{nft?.token_id}</IonCol>
+                        </IonRow>
+                      <IonRow> 
+                        <IonCol className="td-left" size="12">Owner of: </IonCol>
+                      </IonRow>
+                        <IonCol className="td-left1" size="12">{nft?.owner_of}</IonCol>
+                      <IonRow> 
+                        <IonCol className="td-left" size="12">Token Address: </IonCol>
+                        </IonRow>
+                        <IonRow>
+                          <IonCol className="td-left1" size="12">{nft?.token_address}</IonCol>
+                        </IonRow>
+                        
+                      <IonRow> 
+                        <IonCol className="td-left" size="12">Block number: </IonCol>
+                      </IonRow>
+                      <IonRow>
+                      <IonCol className="td-left1" size="12">{nft?.block_number}</IonCol>
+                      </IonRow>
+                      <IonRow> 
+                        <IonCol className="td-left">Block number minted:</IonCol>
+                         </IonRow>
+                        <IonRow>
+                        <IonCol className="td-left1" size="12">{nft?.block_number_minted}</IonCol>
+                        </IonRow>
+                      <IonRow> 
+                        <IonCol className="td-left" size="12">Token Hash: </IonCol>
+                      </IonRow>
+                      <IonRow>
+                      <IonCol className="td-left1" size="12">{nft?.token_hash}</IonCol>
+                      </IonRow>
+                      <IonRow>
+                        <IonCol className="td-left" size="12">Last Token Uri Sync:</IonCol>
+                       </IonRow>
+                       <IonRow>
+                       <IonCol className="td-left1" size="12">{nft?.last_token_uri_sync}</IonCol>
+                       </IonRow>
+                      <IonRow>
+                        <IonCol className="td-left" size="12">Last Metadata Sync:</IonCol>
+                        <IonCol className="td-left1" size="12">{nft?.last_metadata_sync }</IonCol>
+                       </IonRow>
+                  
+                      
+
+
+                          </IonGrid>
+                          </IonCol>
+                          </IonRow>
+
+
+
+                          
+                          </IonGrid> 
+
+                        </div>
+                      </IonCardContent>
+                    </IonCard>
+                  </IonCol>
+                ))
+              }
+          </IonRow>
+        </div>
+          
+        <div className="WebApp">
+          <IonRow>
+            {chainId == 'xDai' ?    // Caso POAPWEB
               //
-              : // Caso genérico 
               nfts.map((nft: any, nftIndex: number) => (
                 <IonCol size="12" key={nftIndex}>
                   <IonCard className="ion-no-margin">
@@ -282,17 +464,106 @@ const ShowNfts: React.FC = () => {
                       
                     </IonCardHeader>
                     <IonCardContent>
-                    <div className="div-flex" > 
-                    <IonGrid>
+                    <div className="div-flex" id="web"> 
+                    <IonGrid >
                     <IonRow>
-                      <IonRow className="td-padding-right">
+                      <IonRow className="image">
                     {isLoading ? (
                     
                         <div className="ion-text-center">
                           <IonIcon size="large" icon={heart}></IonIcon>
                         </div>
                       ) : (
-                        <IonImg
+                      
+                        <IonImg className="image"
+                        
+                        onIonImgDidLoad={console.log}
+                        onIonError={() =>
+                          failedLoadImage(nft.image, nftIndex)
+                        }
+                          style={{
+                            width: "228px",
+                            height: "228px",
+                            margin: "5 auto",
+                         
+                          }}
+                          
+                          src={nft?.image}
+                        />
+
+                        
+                      )}
+
+                    </IonRow>
+
+                    <IonCol>
+                    
+                      
+                     
+                      
+                    <IonGrid className="table-flex">
+                    <IonRow> 
+                      <IonCol className="td-left"> Chain: <IonCol className="td-right">{nft?.chain}</IonCol></IonCol> 
+                      </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-left">Contract Type: <IonCol className="td-right">POAP</IonCol></IonCol>
+                       </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-left">Token Id:<IonCol className="td-right">{nft?.tokenId}</IonCol></IonCol> 
+                      </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-left">Owner of:<IonCol className="td-right">{nft?.owner}</IonCol></IonCol>
+                      </IonRow>
+                   
+                    <IonRow> 
+                      <IonCol className="td-left">Block number: <IonCol className="td-right">NA</IonCol></IonCol>
+                      </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-left">Block number minted: <IonCol className="td-right">NA</IonCol></IonCol>
+                      </IonRow>
+                    <IonRow> 
+                      <IonCol className="td-left">Token Hash: <IonCol className="td-right">NA</IonCol></IonCol>
+                      </IonRow>
+                    <IonRow>
+                      <IonCol className="td-left">Last Token Uri Sync:<IonCol className="td-right">NA</IonCol></IonCol>
+                      </IonRow>
+                    <IonRow>
+                      <IonCol className="td-left">Last Metadata Sync: <IonCol className="td-right">NA</IonCol></IonCol>
+                      </IonRow>
+                        </IonGrid>
+                        </IonCol>
+                        </IonRow>
+                        </IonGrid> 
+
+                      </div>
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
+              ))              
+              
+              //
+              : // Caso genéricoWEb3 
+              nfts.map((nft: any, nftIndex: number) => (
+                <IonCol size="12" key={nftIndex}>
+                  <IonCard className="ion-no-margin">
+                    <IonCardHeader>
+                     
+                      
+                    </IonCardHeader>
+                    <IonCardContent>
+                    <div className="div-flex" id="web"> 
+                    <IonGrid >
+                    <IonRow>
+                      <IonRow className="image">
+                    {isLoading ? (
+                    
+                        <div className="ion-text-center">
+                          <IonIcon size="large" icon={heart}></IonIcon>
+                        </div>
+                      ) : (
+                      
+                        <IonImg className="image"
+                        
                          
                           onIonImgDidLoad={console.log}
                           onIonError={() =>
@@ -301,7 +572,7 @@ const ShowNfts: React.FC = () => {
                           style={{
                             width: "228px",
                             height: "228px",
-                            margin: "25 auto",
+                            margin: "5 auto",
                          
                           }}
                           src={nft.metadata?.image}
@@ -317,40 +588,46 @@ const ShowNfts: React.FC = () => {
                       
                     <IonGrid className="table-flex">
                     <IonRow> 
-                      <IonCol className="td-right"> Chain: <IonCol className="td-left">{nft?.chain}</IonCol></IonCol> 
+                      <IonCol className="td-left"> Chain: <IonCol className="td-right">{nft?.chain}</IonCol></IonCol> 
                       </IonRow>
                     <IonRow> 
-                      <IonCol className="td-right">Contract Type: <IonCol className="td-left">{nft?.contract_type}</IonCol></IonCol>
+                      <IonCol className="td-left">Contract Type: <IonCol className="td-right">{nft?.contract_type}</IonCol></IonCol>
                        </IonRow>
+                       
                     <IonRow> 
-                      <IonCol className="td-right">Token Id:<IonCol className="td-left">{nft?.token_id}</IonCol></IonCol> 
+                      <IonCol className="td-left" size="12"> Token_Id:
+                      <IonCol className="td-left1">{nft?.token_id}</IonCol></IonCol> 
                       </IonRow>
                     <IonRow> 
-                      <IonCol className="td-right">Owner of: <IonCol className="td-left">{nft?.owner_of}</IonCol></IonCol>
+                      <IonCol className="td-left">Owner of: <IonCol className="td-right">{nft?.owner_of}</IonCol></IonCol>
                       </IonRow>
                     <IonRow> 
-                      <IonCol className="td-right">Token Address: <IonCol className="td-left">{nft?.token_address}</IonCol></IonCol>
+                      <IonCol className="td-left">Token Address: <IonCol className="td-right">{nft?.token_address}</IonCol></IonCol>
                       </IonRow>
                     <IonRow> 
-                      <IonCol className="td-right">Block number: <IonCol className="td-left">{nft?.block_number}</IonCol></IonCol>
+                      <IonCol className="td-left">Block number: <IonCol className="td-right">{nft?.block_number}</IonCol></IonCol>
                       </IonRow>
                     <IonRow> 
-                      <IonCol className="td-right">Block number minted: <IonCol className="td-left">{nft?.block_number_minted}</IonCol></IonCol>
+                      <IonCol className="td-left">Block number minted: <IonCol className="td-right">{nft?.block_number_minted}</IonCol></IonCol>
                       </IonRow>
                     <IonRow> 
-                      <IonCol className="td-right">Token Hash: <IonCol className="td-left">{nft?.token_hash}</IonCol></IonCol>
+                      <IonCol className="td-left">Token Hash: <IonCol className="td-right">{nft?.token_hash}</IonCol></IonCol>
                       </IonRow>
                     <IonRow>
-                      <IonCol className="td-right">Last Token Uri Sync:<IonCol className="td-left">{nft?.last_token_uri_sync}</IonCol></IonCol>
+                      <IonCol className="td-left">Last Token Uri Sync:<IonCol className="td-right">{nft?.last_token_uri_sync}</IonCol></IonCol>
                       </IonRow>
                     <IonRow>
-                      <IonCol className="td-right">Last Metadata Sync: <IonCol className="td-left">{nft?.last_metadata_sync }</IonCol></IonCol>
+                      <IonCol className="td-left">Last Metadata Sync: <IonCol className="td-right">{nft?.last_metadata_sync }</IonCol></IonCol>
                       </IonRow>
                         </IonGrid>
                         </IonCol>
                         </IonRow>
-                        </IonGrid> 
 
+
+           
+                        </IonGrid> 
+                       
+                        
                       </div>
                     </IonCardContent>
                   </IonCard>
@@ -358,12 +635,25 @@ const ShowNfts: React.FC = () => {
               ))
             }
           </IonRow>
-          <IonRow>
-            <IonLabel color="danger" className="my-label">{isFindedNfts == true ? "" : errorText}</IonLabel>
-          </IonRow>
+        </div>
+
+        <IonRow>
+         
+                <IonLabel color="danger" className="my-label">{isFindedNfts == true ? "" : errorText}</IonLabel>
+                  
+        </IonRow>
         </IonGrid>
       </IonContent>
+
+
+
+
+      
     </IonPage>
+
+
+
+    
   );
 };
 
