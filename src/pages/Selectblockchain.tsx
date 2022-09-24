@@ -23,7 +23,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { filterOutline, gridOutline, searchOutline } from "ionicons/icons";
 import { userInfo } from "os";
 import { useRef, useState } from "react";
-import "./SelectBlockchain.css";
+import "./Selectblockchain.css";
 
 interface IBlockchain {
   chainId: string;

@@ -11,7 +11,7 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { informationOutline, bookOutline, globeOutline ,search} from "ionicons/icons";
-import SelectBlockchain from "./pages/SelectBlockchain";
+import SelectBlockchain from "./pages/Selectblockchain";
 import ShowNfts from "./pages/ShowNFTS";
 import About from "./pages/About";
 import Offline from "./pages/Offline";
