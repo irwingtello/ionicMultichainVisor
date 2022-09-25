@@ -9,7 +9,7 @@ import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { allowedNodeEnvironmentFlags } from 'process';
 const NFTS_KEY = 'nft';
 
-let chainId: string;
+
 
 
 const Offline: React.FC = () => {
@@ -45,7 +45,7 @@ const Offline: React.FC = () => {
 }
 
   useEffect(() => {
-    
+    setChainx("all");
    initStorage().then((st) => {
     console.log('st', st);
     let {nft} = JSON.parse(st);
@@ -67,6 +67,7 @@ const Offline: React.FC = () => {
    })
   
   }, []);
+
   
 
   async function fetchNftsSaved() {
@@ -75,7 +76,7 @@ const Offline: React.FC = () => {
     initStorage().then((st) => {
       let {nft} = JSON.parse(st);
       let masterArray=[];
-  
+      
 
         for(let address in nft[chainx])
         {
@@ -142,7 +143,7 @@ const Offline: React.FC = () => {
 
         </IonGrid>
         {/*IonGridNFTS(chainId, nfts)*/
-          IonGridNFTS(chainId, nftsRecord, isLoading, isFindedNfts, errorText)
+          IonGridNFTS(chainx==null?"all":chainx, nftsRecord, isLoading, isFindedNfts, errorText)
 
         }
 

@@ -175,21 +175,6 @@ const ShowNfts: React.FC = () => {
               setIsFindedNfts(true); 
               nft.chain = chainId;
               nft.image = nft.event.image_url;
-              if(nft.event.image_url === "ipfs://")
-              {
-                  try 
-                  {
-                    nft.image=nft.event.image_url.replace("ipfs://", "https://ipfs.io/ipfs/");
-                  }
-                  catch
-                  {
-                    nft.image="https://lh3.googleusercontent.com/5wX5t0QHTVMd-8KeqY9Y67l-giA9pVUOgc_BcyyjKVfCHxP21NQOHixiBPFpGZVsQi7-2Q=s170";
-                  }
-              }
-              else
-              {
-                nft.image = nft.event.image_url;
-              }
               nft.nftId = nft.event.id;
               nft.fancy_id = nft.event.fancy_id;
               nft.year = nft.event.year;
