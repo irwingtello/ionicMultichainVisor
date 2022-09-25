@@ -15,11 +15,6 @@ import { useEffect, useState, useRef } from "react";
 
 
 export default function IonGridNFTS(chainId: any, nfts: any, isLoading: boolean, isFindedNfts: boolean, errorText: string) {
-
-    // Estas 3 const están en SHow nft también:
-    //const [isLoading, setIsLoading] = useState(false);
-    //const [isFindedNfts, setIsFindedNfts] = useState(true);
-    //const [errorText, setErrorText] = useState("");
     
 
   
@@ -29,10 +24,7 @@ export default function IonGridNFTS(chainId: any, nfts: any, isLoading: boolean,
         }
       }
     
-      //function onError(err: any): void {
-      //  console.log(err);
-      //  setIsLoading(false);
-      //}
+
 
     return (
       <IonGrid>

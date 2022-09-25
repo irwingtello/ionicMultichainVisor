@@ -11,7 +11,6 @@ const NFTS_KEY = 'nft';
 
 
 
-
 const Offline: React.FC = () => {
 
   const [nfts, setNfts] = useState<any>([]);
