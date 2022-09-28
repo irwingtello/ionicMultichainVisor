@@ -8,6 +8,7 @@ import {
   IonRow,
   IonCol,
   IonButton,
+  IonLabel,
   IonList,
   IonItem,
   IonSelect,
@@ -31,10 +32,10 @@ const Offline: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isFindedNfts, setIsFindedNfts] = useState(true);
-  const [errorText, setErrorText] = useState("Hubo error");
+  const [errorText, setErrorText] = useState("");
   const [nftsRecord, setNftsDb] = useState<any>([]); // contiene los registros en total
 
-  const [chainx, setChainx] = useState("");
+  const [ChainId, setChainId] = useState("");
 
   const initStorage = async () => {
     const newStore = new Storage({
@@ -60,7 +61,7 @@ const Offline: React.FC = () => {
   };
 
   useEffect(() => {
-    setChainx("all");
+    setChainId("all");
     initStorage().then((st) => {
       console.log("st", st);
       let { nft } = JSON.parse(st);
@@ -78,26 +79,41 @@ const Offline: React.FC = () => {
     });
   }, []);
 
+  async function DropDownChain_Onchange(selectedChainId: string) {
+    setNftsDb([]);
+  }
+
   async function fetchNftsSaved() {
-    console.log("Select: ", chainx);
-    initStorage().then((st) => {
-      let { nft } = JSON.parse(st);
-      let masterArray = [];
+    console.log("Select: ", ChainId);
+    if (ChainId == 'all' || ChainId.length == 0)
+      setErrorText("Select NFT");
+    else {
+      initStorage().then((st) => {
+        let { nft } = JSON.parse(st);
+        let masterArray = [];
 
-      for (let address in nft[chainx]) {
-        for (let metadata in nft[chainx][address]) {
-          nft[chainx][address][metadata].chain = chainx;
-          masterArray.push(nft[chainx][address][metadata]);
+        for (let address in nft[ChainId]) {
+          for (let metadata in nft[ChainId][address]) {
+            nft[ChainId][address][metadata].chain = ChainId;
+            masterArray.push(nft[ChainId][address][metadata]);
+          }
         }
-      }
 
-      setNftsDb(masterArray);
-      console.log(nftsRecord);
-      // IonGridNFTS(chainId, nfts, isLoading, isFindedNfts, errorText);
-    });
-    //console.log("Nft despues", showNfts());
+        setNftsDb(masterArray);
+        //console.log(nftsRecord);
 
-    //IonGridNFTS(chainId, nfts, isLoading, isFindedNfts, errorText);
+        if (masterArray.length == 0)
+          setErrorText("Not finded saved NFTs");
+        else
+          setErrorText("");
+
+
+        // IonGridNFTS(chainId, nfts, isLoading, isFindedNfts, errorText);
+      });
+      //console.log("Nft despues", showNfts());
+
+      //IonGridNFTS(chainId, nfts, isLoading, isFindedNfts, errorText);
+    }
   }
 
   return (
@@ -118,7 +134,11 @@ const Offline: React.FC = () => {
                     <IonSelect
                       interface="popover"
                       placeholder="Select NFT"
-                      onIonChange={(ev) => setChainx(ev.detail.value)}
+                      onIonChange={(ev) => {
+                        setChainId(ev.detail.value);
+                        DropDownChain_Onchange(ev.detail.value);
+                      }}
+
                     >
                       <IonSelectOption value="0x1">ETH</IonSelectOption>
                       <IonSelectOption value="0x89">Polygon</IonSelectOption>
@@ -148,17 +168,18 @@ const Offline: React.FC = () => {
               </IonButton>
             </IonCol>
           </IonRow>
+          <IonRow>
+            <IonLabel color="danger" className="my-label">   {errorText}</IonLabel>
+          </IonRow>
         </IonGrid>
 
         <div className="WebApp">
           {
             /*IonGridNFTS(chainId, nfts)*/
             IonGridNFTS(
-              chainx == null ? "all" : chainx,
+              ChainId == null ? "all" : ChainId,
               nftsRecord,
-              isLoading,
-              isFindedNfts,
-              errorText
+              isLoading
             )
           }
         </div>
@@ -167,11 +188,9 @@ const Offline: React.FC = () => {
           {
             /*IonGridNFTS(chainId, nfts)*/
             IonGridCel(
-              chainx == null ? "all" : chainx,
+              ChainId == null ? "all" : ChainId,
               nftsRecord,
-              isLoading,
-              isFindedNfts,
-              errorText
+              isLoading
             )
           }
         </div>

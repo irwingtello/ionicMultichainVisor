@@ -16,10 +16,8 @@ import { useEffect, useState, useRef } from "react";
 export default function IonGridNFTS(
   chainId: any,
   nfts: any,
-  isLoading: boolean,
-  isFindedNfts: boolean,
-  errorText: string
-) {
+  isLoading: boolean
+  ) {
   function failedLoadImage(tokenUri: string, _nftIndex: number): void {
     console.log(nfts[_nftIndex], tokenUri);
     if (tokenUri) {

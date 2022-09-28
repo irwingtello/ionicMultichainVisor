@@ -1,34 +1,21 @@
 import {
-  IonAvatar,
   IonButton,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
   IonCol,
   IonContent,
   IonGrid,
   IonHeader,
   IonIcon,
-  IonImg,
   IonInput,
-  IonItem,
   IonLabel,
-  IonList,
   IonPage,
   IonRow,
   IonTitle,
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
-import QRCodeSVG from "qrcode.react";
 
 import {
-  filterOutline,
-  gridOutline,
-  heart,
-  image,
-  searchOutline,
-  squareOutline,
+  squareOutline
 } from "ionicons/icons";
 import { useEffect, useState, useRef } from "react";
 import "./ShowNFTS.css";
@@ -53,13 +40,9 @@ const ShowNfts: React.FC = () => {
   // console.log(params);
   const [blockchainName, setBlockchainName] = useState("");
   const [address, setAddress] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [search, setSearch] = useState("");
   const [nfts, setNfts] = useState<any>([]);
-  const [isShowingQR, setIsShowingQR] = useState<any>({});
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isFindedNfts, setIsFindedNfts] = useState(true);
   const [errorText, setErrorText] = useState("");
 
   const Popover = () => (
@@ -99,7 +82,6 @@ const ShowNfts: React.FC = () => {
     onDismiss: (data: any, role: string) => dismiss(data, role),
     side: "top-bottom",
   });
-  const [roleMsg, setRoleMsg] = useState("");
 
   const { saveNFTs } = useStorage(); // Importamos nuestras funciones del archivo useStorage
 
@@ -112,11 +94,11 @@ const ShowNfts: React.FC = () => {
     // valida input vacío
     if (address.trim().length === 0) {
       setErrorText("Write the address");
-      setIsFindedNfts(false);
       setNfts([]);
-    } else {
+    }
+    else {
+      setErrorText("");
       setIsLoading(true);
-      setIsFindedNfts(true);
 
       // Busca cual blockchain llegó por URL
       for (row = 0; row <= customData.length; row++) {
@@ -142,54 +124,47 @@ const ShowNfts: React.FC = () => {
             "X-Api-Key": API_KEY,
           },
         });
-        try {
-          let posts = [];
-          if (chainId != "xDai") {
-            data.result = data.result.map((nft: any) => ({
-              ...nft,
-              chain: chainId,
-              metadata: JSON.parse(nft.metadata),
-            }));
+        let posts = [];
+        if (chainId != "xDai") {
+          data.result = data.result.map((nft: any) => ({
+            ...nft,
+            chain: chainId,
+            metadata: JSON.parse(nft.metadata),
+          }));
 
-            posts = await Promise.all(
-              data.result.map(async (nft: any) => {
-                setIsFindedNfts(true);
-                return nft;
-              })
-            );
-          } else {
-            posts = await Promise.all(
-              data.map(async (nft: any) => {
-                setIsFindedNfts(true);
-                nft.chain = chainId;
-                nft.image = nft.event.image_url;
-                nft.nftId = nft.event.id;
-                nft.fancy_id = nft.event.fancy_id;
-                nft.year = nft.event.year;
-                nft.start_date = nft.event.start_date;
-                nft.end_date = nft.event.end_date;
-                return nft;
-              })
-            );
-          }
-          if (posts.length <= 0) {
-            setErrorText("Sorry we don't found yours nfts");
-            setIsFindedNfts(false);
-          }
-          setNfts(posts);
-        } catch {
-          setErrorText("Sorry we don't found yours nfts, finded error");
-          setIsFindedNfts(false);
+          posts = await Promise.all(
+            data.result.map(async (nft: any) => {
+              return nft;
+            })
+          );
+        } else {
+          posts = await Promise.all(
+            data.map(async (nft: any) => {
+              nft.chain = chainId;
+              nft.image = nft.event.image_url;
+              nft.nftId = nft.event.id;
+              nft.fancy_id = nft.event.fancy_id;
+              nft.year = nft.event.year;
+              nft.start_date = nft.event.start_date;
+              nft.end_date = nft.event.end_date;
+              return nft;
+            })
+          );
         }
-
+        if (posts.length <= 0) {
+          setErrorText("Sorry we don't found yours nfts");
+        }
+        setNfts(posts);
         setIsLoading(false);
-      } catch ({ error }) {
-        setIsFindedNfts(false);
+
+      } catch (error) {
+        console.log(error);
+        setErrorText("Invalid Address");
       }
     }
   }
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   return (
     <IonPage>
@@ -219,36 +194,38 @@ const ShowNfts: React.FC = () => {
           </IonRow>
           <IonRow>
             {/*Button Search */}
+            <div className="div-buttons">
             <IonCol class="cell-class cell-align cell-buttons-size ">
+              
               <IonButton
                 onClick={fetchNfts}
                 color="primary"
                 className="ion-activatable ripple-parent"
                 style={{}}
-              >
+                >
                 Search
               </IonButton>
               {/*Button Save */}
+                
               <IonButton
                 onClick={() => saveNftsHandle()}
                 color="light"
                 className="ion-activatable ripple-parent"
-              >
+                >
                 Save
               </IonButton>
             </IonCol>
+                  </div>
+                
           </IonRow>
           <IonRow>
-            <IonLabel color="danger" className="my-label">
-              {isFindedNfts == true ? "" : errorText}
-            </IonLabel>
-                   
+            <IonLabel color="danger" className="my-label">   {errorText}</IonLabel>
           </IonRow>
         </IonGrid>
 
         <div className="WebApp">
           {
-            IonGridNFTS(chainId, nfts, isLoading, isFindedNfts, errorText)
+            IonGridNFTS(chainId, nfts, isLoading)
             /*<IonGridNFTS
             chainId={chainId}
             nfts={nfts}
@@ -261,7 +238,7 @@ const ShowNfts: React.FC = () => {
 
         <div className="Mobile">
           {
-            IonGridCel(chainId, nfts, isLoading, isFindedNfts, errorText)
+            IonGridCel(chainId, nfts, isLoading)
             /*<IonGridNFTS
             chainId={chainId}
             nfts={nfts}

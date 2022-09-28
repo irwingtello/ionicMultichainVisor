@@ -8,6 +8,7 @@ import {
   IonRow,
   IonCol,
   IonButton,
+  IonLabel,
   IonList,
   IonItem,
   IonSelect,
@@ -32,7 +33,7 @@ const Address: React.FC = () => {
   //const [addressArray, setAddressArray] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFindedNfts, setIsFindedNfts] = useState(true);
-  const [errorText, setErrorText] = useState("Hubo error");
+  const [errorText, setErrorText] = useState("");
 
   const initStorage = async () => {
     const newStore = new Storage({
@@ -82,6 +83,8 @@ const Address: React.FC = () => {
   }
 
   async function searchAddress(chainField: string) {
+
+
     let itemAddress: itemAdressOption[] = [];
 
     initStorage().then((st) => {
@@ -104,8 +107,8 @@ const Address: React.FC = () => {
 
   async function DropDownChain_Onchange(selectedChainId: string) {
     //  recibe las "0x1", "0x89", "0x38"... etc
-
-    //console.log(chainName);
+    setSelectAddressValue("");
+    setNftsRecord([]);
     setChainId(selectedChainId);
     switch (selectedChainId) {
       case "0x1":
@@ -136,27 +139,43 @@ const Address: React.FC = () => {
   }
 
   async function fetchNfts() {
-    if (chainId != null && selectAddressValue != null) {
-      initStorage().then((st) => {
-        let { nft } = JSON.parse(st);
-
-        let masterArray = [];
-
-        for (let address in nft[chainId]) {
-          for (let metadata in nft[chainId][address]) {
-            nft[chainId][address][metadata].chain = chainId;
-            masterArray.push(nft[chainId][address][metadata]);
-          }
-        }
-
-        //Key
-        setNftsRecord(masterArray);
-        console.log("Prueba    ", masterArray);
-
-        //setSelectAddressValue("adsfadsf");
-        //setAddress(null);
-      });
+    if (chainName == 'all' || chainName.length == 0)
+      setErrorText("Select NFT");
+    else if (selectAddressValue.length == 0) {
+      if (itemAddress.length == 0)
+        setErrorText("Not finded saved NFTs");
+      else
+        setErrorText("Select Address");
     }
+    else {
+      if (chainId != null && selectAddressValue != null) {
+        initStorage().then((st) => {
+          let { nft } = JSON.parse(st);
+
+          let masterArray = [];
+
+          for (let address in nft[chainId]) {
+            for (let metadata in nft[chainId][address]) {
+              nft[chainId][address][metadata].chain = chainId;
+              masterArray.push(nft[chainId][address][metadata]);
+            }
+          }
+
+          //Key
+          setNftsRecord(masterArray);
+
+          if (masterArray.length == 0)
+            setErrorText("Not finded saved NFTs");
+          else
+            setErrorText("");
+
+
+          //setSelectAddressValue("adsfadsf");
+          //setAddress(null);
+        });
+      }
+    }
+
   }
 
   return (
@@ -208,6 +227,7 @@ const Address: React.FC = () => {
                   interface="popover"
                   placeholder="Select Address"
                   value={selectAddressValue}
+                  onIonChange={(ev) => setSelectAddressValue(ev.detail.value)}
                 >
                   {itemAddress.map((item: itemAdressOption, index: number) => {
                     return (
@@ -256,6 +276,11 @@ const Address: React.FC = () => {
           <IonRow>
             <IonCol class="cell-class cell-align cell-buttons-size "></IonCol>
           </IonRow>
+
+          <IonRow>
+            <IonLabel color="danger" className="my-label">   {errorText}</IonLabel>
+          </IonRow>
+
         </IonGrid>
 
         <div className="WebApp">
@@ -264,9 +289,7 @@ const Address: React.FC = () => {
             IonGridNFTS(
               chainId == null ? "all" : chainId,
               nftsRecord,
-              isLoading,
-              isFindedNfts,
-              errorText
+              isLoading
             )
           }
         </div>
@@ -277,9 +300,7 @@ const Address: React.FC = () => {
             IonGridCel(
               chainId == null ? "all" : chainId,
               nftsRecord,
-              isLoading,
-              isFindedNfts,
-              errorText
+              isLoading
             )
           }
         </div>

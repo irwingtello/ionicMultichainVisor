@@ -9,6 +9,11 @@
     justify-content: center;
 }
 
+.div-buttons {  
+    text-align: right;
+    flex:100
+}
+
 
 .div-flex {
     justify-content: space-between;
