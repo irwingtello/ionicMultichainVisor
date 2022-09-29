@@ -85,8 +85,7 @@ const Offline: React.FC = () => {
 
   async function fetchNftsSaved() {
     console.log("Select: ", ChainId);
-    if (ChainId == 'all' || ChainId.length == 0)
-      setErrorText("Select NFT");
+    if (ChainId == "all" || ChainId.length == 0) setErrorText("Select NFT");
     else {
       initStorage().then((st) => {
         let { nft } = JSON.parse(st);
@@ -102,11 +101,8 @@ const Offline: React.FC = () => {
         setNftsDb(masterArray);
         //console.log(nftsRecord);
 
-        if (masterArray.length == 0)
-          setErrorText("Not finded saved NFTs");
-        else
-          setErrorText("");
-
+        if (masterArray.length == 0) setErrorText("Not finded saved NFTs");
+        else setErrorText("");
 
         // IonGridNFTS(chainId, nfts, isLoading, isFindedNfts, errorText);
       });
@@ -138,7 +134,6 @@ const Offline: React.FC = () => {
                         setChainId(ev.detail.value);
                         DropDownChain_Onchange(ev.detail.value);
                       }}
-
                     >
                       <IonSelectOption value="0x1">ETH</IonSelectOption>
                       <IonSelectOption value="0x89">Polygon</IonSelectOption>
@@ -169,7 +164,9 @@ const Offline: React.FC = () => {
             </IonCol>
           </IonRow>
           <IonRow>
-            <IonLabel color="danger" className="my-label">   {errorText}</IonLabel>
+            <IonLabel color="danger" className="my-label">
+                 {errorText}
+            </IonLabel>
           </IonRow>
         </IonGrid>
 
@@ -187,11 +184,7 @@ const Offline: React.FC = () => {
         <div className="Mobile ">
           {
             /*IonGridNFTS(chainId, nfts)*/
-            IonGridCel(
-              ChainId == null ? "all" : ChainId,
-              nftsRecord,
-              isLoading
-            )
+            IonGridCel(ChainId == null ? "all" : ChainId, nftsRecord, isLoading)
           }
         </div>
       </IonContent>

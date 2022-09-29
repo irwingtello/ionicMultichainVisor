@@ -1,114 +1,98 @@
 .div {
-    flex-direction: row;
-    
+  flex-direction: row;
 }
 
 .my-label {
-    font-size: 2em;
-    display: flex;
-    justify-content: center;
+  font-size: 2em;
+  display: flex;
+  justify-content: center;
 }
 
-.div-buttons {  
-    text-align: right;
-    flex:100
+.div-buttons {
+  text-align: left;
+  flex: 100;
 }
-
 
 .div-flex {
-    justify-content: space-between;
-    flex-direction: row;
-    
+  justify-content: space-between;
+  flex-direction: row;
 }
 
 .div-flexMovil {
-    justify-content: space-between;
-    flex-direction: row;
-    
+  justify-content: space-between;
+  flex-direction: row;
 }
-
 
 .table-flex {
-    flex: 100;
-    flex-direction: row;
-    
+  flex: 100;
+  flex-direction: row;
 }
 
-.ion-no-margin{
-
-    justify-content: space-between;
-    flex-direction: row;
+.ion-no-margin {
+  justify-content: space-between;
+  flex-direction: row;
 }
-   
 
-.ion-no-marginMovil{
-
-    justify-content: space-between;
-    flex-direction: row;
+.ion-no-marginMovil {
+  justify-content: space-between;
+  flex-direction: row;
 }
-   
-  
+
 .td-right {
-    text-align: right;
-   
-    width: 65%;
-    align-items: right;
-    align-self: right;
-    align-content: right;
-    align-tracks: right;
-    color: rgb(6, 40, 231);
-    font-weight: bold;
-    
+  text-align: right;
 
-    /*border-color: white;
+  width: 65%;
+  align-items: right;
+  align-self: right;
+  align-content: right;
+  align-tracks: right;
+  color: rgb(6, 40, 231);
+  font-weight: bold;
+
+  /*border-color: white;
     border-width: .01em;
     border-style: solid;
     margin-bottom: -1px;*/
 }
 
-.p-font{
-    font-weight: bold;
-    color: rgb(87, 87, 87);
-    
+.p-font {
+  font-weight: bold;
+  color: rgb(87, 87, 87);
 }
 
-
-  
-
 .td-left {
-    text-align: left;
-    align-items: left;
-    align-self: left;
-    align-content: left;
-    align-tracks: left;
-    width: 65%;
-    color: rgb(87, 87, 87);
-    font-weight: bold;
-    padding-left: 0px;
+  text-align: left;
+  align-items: left;
+  align-self: left;
+  align-content: left;
+  align-tracks: left;
+  width: 65%;
+  color: rgb(87, 87, 87);
+  font-weight: bold;
+  padding-left: 0px;
 
-    /*border-color: white;
+  /*border-color: white;
     border-width: .01em;
     border-style: solid;
     margin-bottom: -1px;*/
 }
 
 .td-left1 {
-    text-align: left;
-    align-items: left;
-    align-self: left;
-    align-content: left;
-    align-tracks: left;
-    width: 65%;
-    color:  rgb(6, 40, 231);
-    font-weight: bold;
-    padding-left: 0px;
+  text-align: left;
+  align-items: left;
+  align-self: left;
+  align-content: left;
+  align-tracks: left;
+  width: 65%;
+  color: rgb(6, 40, 231);
+  font-weight: bold;
+  padding-left: 0px;
 
-    /*border-color: white;
+  /*border-color: white;
     border-width: .01em;
     border-style: solid;
     margin-bottom: -1px;*/
 }
-
 
 /*
 .cell-class {
@@ -121,146 +105,115 @@
 */
 
 .cell-align {
-    align-items: stretch;
+  align-items: stretch;
 }
 
 .cell-buttons-size {
-    size: 0ch;
+  size: 0ch;
 }
 
 .row-class {
-    /*border-color: white;
+  /*border-color: white;
     border-width: .01em;
     border-style: solid;
     margin-bottom: -1px;
     */
-    flex-direction: "row";
+  flex-direction: "row";
 }
 
-
-
-
-
-.td-padding-right{
-
-    padding-right: 30px;
-
-
+.td-padding-right {
+  padding-right: 30px;
 }
-.image{
-    margin:auto;
-    display:block;
+.image {
+  margin: auto;
+  display: block;
 }
 
-.imageMovil
-{
-    margin:auto;
-    display:block;
-
+.imageMovil {
+  margin: auto;
+  display: block;
 }
 
+/* Media Query for Mobile Devices */
+@media (max-width: 480px) {
+  .Mobile {
+    display: visible;
+  }
+  .WebApp {
+    display: none;
+  }
 
+  .imageMovil {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-   /* Media Query for Mobile Devices */
-   @media (max-width: 480px) {
-    .Mobile{
-
-        display: visible;
-    }
-    .WebApp{
-        display: none;
-    }
-
-    .imageMovil { 
-        display: flex;
-       align-items: center;
-      justify-content: center;
-      
-    }
-
-    .my-label {
-        font-size:23px;
-    
-    }
+  .my-label {
+    font-size: 23px;
+  }
 }
-  
+
 /* Media Query for low resolution  Tablets, Ipads */
 @media (min-width: 481px) and (max-width: 767px) {
-    .Mobile{
+  .Mobile {
+    display: none;
+  }
+  .WebApp {
+    display: visible;
+  }
 
-        display: none;
-    }
-    .WebApp{
-        display: visible;
-    }
-
-    .image { 
-        display: flex;
-   align-items: center;
-   justify-content: center;
-      
-    }
+  .image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
-  
+
 /* Media Query for Tablets Ipads portrait mode */
-@media (min-width: 768px) and (max-width: 1024px){
-    .Mobile{
+@media (min-width: 768px) and (max-width: 1024px) {
+  .Mobile {
+    display: none;
+  }
+  .WebApp {
+    display: visible;
+  }
 
-        display: none;
-    }
-    .WebApp{
-        display: visible;
-    }
-
-    .image { 
-        display: flex;
-   align-items: center;
-   justify-content: center;
-      
-    }
+  .image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
-  
+
 /* Media Query for Laptops and Desktops */
-@media (min-width: 1025px) and (max-width: 1280px){
-    .Mobile{
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .Mobile {
+    display: none;
+  }
+  .WebApp {
+    display: visible;
+  }
 
-        display: none;
-    }
-    .WebApp{
-        display: visible;
-    }
-
-    .image { 
-        display: flex;
-   align-items: center;
-   justify-content: center;
-      
-    }
+  .image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
-  
+
 /* Media Query for Large screens */
 @media (min-width: 1281px) {
-    .Mobile{
+  .Mobile {
+    display: none;
+  }
+  .WebApp {
+    display: visible;
+  }
 
-        display: none;
-    }
-    .WebApp{
-        display: visible;
-    }
-
-    .image { 
-        display: flex;
-   align-items: center;
-   justify-content: center;
-      
-    }
+  .image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
-
-
-
-
-
-
-  
-
-  
