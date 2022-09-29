@@ -14,9 +14,7 @@ import {
   useIonPopover,
 } from "@ionic/react";
 
-import {
-  squareOutline
-} from "ionicons/icons";
+import { squareOutline } from "ionicons/icons";
 import { useEffect, useState, useRef } from "react";
 import "./ShowNFTS.css";
 import axios from "axios";
@@ -95,8 +93,7 @@ const ShowNfts: React.FC = () => {
     if (address.trim().length === 0) {
       setErrorText("Write the address");
       setNfts([]);
-    }
-    else {
+    } else {
       setErrorText("");
       setIsLoading(true);
 
@@ -126,11 +123,27 @@ const ShowNfts: React.FC = () => {
         });
         let posts = [];
         if (chainId != "xDai") {
-          data.result = data.result.map((nft: any) => ({
-            ...nft,
-            chain: chainId,
-            metadata: JSON.parse(nft.metadata),
-          }));
+          // return data
+          // data.map((x: any) => x);
+          /*
+          data.map((x: any) => {
+            // process data
+          })
+          */
+          data.result = data.result.map((nft: any) => {
+            const metadata = JSON.parse(nft.metadata);
+            if (metadata) {
+              metadata.image =
+                metadata && metadata.image
+                  ? metadata.image.replace("ipfs://", "https://ipfs.io/ipfs/")
+                  : "https://lh3.googleusercontent.com/5wX5t0QHTVMd-8KeqY9Y67l-giA9pVUOgc_BcyyjKVfCHxP21NQOHixiBPFpGZVsQi7-2Q=s170";
+            }
+            return {
+              ...nft,
+              chain: chainId,
+              metadata,
+            };
+          });
 
           posts = await Promise.all(
             data.result.map(async (nft: any) => {
@@ -141,6 +154,11 @@ const ShowNfts: React.FC = () => {
           posts = await Promise.all(
             data.map(async (nft: any) => {
               nft.chain = chainId;
+              //Checar si no esta nulo,si no esta nulo, muestra y hace el replace
+              //nft.image = nft.image  &&  nft.image.replace("ipfs://", "https://ipfs.io/ipfs/");
+              nft.image = nft.image
+                ? nft.image.replace("ipfs://", "https://ipfs.io/ipfs/")
+                : "https://lh3.googleusercontent.com/5wX5t0QHTVMd-8KeqY9Y67l-giA9pVUOgc_BcyyjKVfCHxP21NQOHixiBPFpGZVsQi7-2Q=s170";
               nft.image = nft.event.image_url;
               nft.nftId = nft.event.id;
               nft.fancy_id = nft.event.fancy_id;
@@ -156,7 +174,6 @@ const ShowNfts: React.FC = () => {
         }
         setNfts(posts);
         setIsLoading(false);
-
       } catch (error) {
         console.log(error);
         setErrorText("Invalid Address");
@@ -164,7 +181,7 @@ const ShowNfts: React.FC = () => {
     }
   }
 
-  useEffect(() => { }, []);
+  useEffect(() => {}, []);
 
   return (
     <IonPage>
@@ -195,31 +212,30 @@ const ShowNfts: React.FC = () => {
           <IonRow>
             {/*Button Search */}
             <div className="div-buttons">
-            <IonCol class="cell-class cell-align cell-buttons-size ">
-              
-              <IonButton
-                onClick={fetchNfts}
-                color="primary"
-                className="ion-activatable ripple-parent"
-                style={{}}
+              <IonCol class="cell-class cell-align cell-buttons-size ">
+                <IonButton
+                  onClick={fetchNfts}
+                  color="primary"
+                  className="ion-activatable ripple-parent"
                 >
-                Search
-              </IonButton>
-              {/*Button Save */}
-                
-              <IonButton
-                onClick={() => saveNftsHandle()}
-                color="light"
-                className="ion-activatable ripple-parent"
+                  Search
+                </IonButton>
+                {/*Button Save */}
+                  
+                <IonButton
+                  onClick={() => saveNftsHandle()}
+                  color="light"
+                  className="ion-activatable ripple-parent"
                 >
-                Save
-              </IonButton>
-            </IonCol>
-                  </div>
-                
+                  Save
+                </IonButton>
+              </IonCol>
+            </div>
           </IonRow>
           <IonRow>
-            <IonLabel color="danger" className="my-label">   {errorText}</IonLabel>
+            <IonLabel color="danger" className="my-label">
+                 {errorText}
+            </IonLabel>
           </IonRow>
         </IonGrid>
 
