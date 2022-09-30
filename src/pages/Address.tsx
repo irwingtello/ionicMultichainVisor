@@ -73,7 +73,8 @@ const Address: React.FC = () => {
           }
         }
       }
-      setNftsRecord(masterArray);
+      // Descomentar esto despues 
+      //setNftsRecord(masterArray);   // Carga todos los address al inicio
     });
   }, []);
 
@@ -162,12 +163,24 @@ const Address: React.FC = () => {
           }
 
           //Key
-          setNftsRecord(masterArray);
+          //console.log("master array -   ", masterArray);
+          if (chainId == 'xDai') {  // Si es POAP
+            setNftsRecord(masterArray.filter((masterArrayItem) => masterArrayItem.owner.toUpperCase() == selectAddressValue.toUpperCase()));
+            if (masterArray.filter((masterArrayItem) => masterArrayItem.owner.toUpperCase() == selectAddressValue.toUpperCase()).length == 0)
+              setErrorText("Not finded saved NFTs");
+            else
+              setErrorText("");
 
-          if (masterArray.length == 0)
-            setErrorText("Not finded saved NFTs");
-          else
-            setErrorText("");
+          }
+          else {  // Si es genérico
+            setNftsRecord(masterArray.filter((masterArrayItem) => masterArrayItem.owner_of.toUpperCase() == selectAddressValue.toUpperCase()));
+
+            if (masterArray.filter((masterArrayItem) => masterArrayItem.owner_of.toUpperCase() == selectAddressValue.toUpperCase()).length == 0)
+              setErrorText("Not finded saved NFTs");
+            else
+              setErrorText("");
+          }
+
 
 
           //setSelectAddressValue("adsfadsf");
@@ -223,7 +236,7 @@ const Address: React.FC = () => {
               <IonCol>
                 <IonSelect // Select 2 -  Address
                   style={{ fontSize: "15px" }}
-                  className="ion-hide-lg-up"
+                  //className="ion-hide-lg-up"
                   interface="popover"
                   placeholder="Select Address"
                   value={selectAddressValue}
@@ -238,14 +251,17 @@ const Address: React.FC = () => {
                   })}
                 </IonSelect>
               </IonCol>
+              {/*
 
               <div className="selectAddres">
                 <select
                   className="ion-hide-lg-down"
                   name="NFTSAddres"
                   id="lang"
+                  placeholder="Select Address"
                   style={{ width: "900px", height: "64px", margin: "5 auto" }}
                   value={selectAddressValue}
+                  onChange={(ev) => setSelectAddressValue(ev.)}
                 >
                   {itemAddress.map((item: itemAdressOption, index: number) => {
                     return (
@@ -253,13 +269,14 @@ const Address: React.FC = () => {
                         key={index == null ? 0 : index}
                         defaultValue="0"
                         value={item.value}
-                      >
+                        >
                         {item.label}
                       </option>
                     );
                   })}
                 </select>
-              </div>
+              </div>*/
+              }
             </IonCol>
 
             <IonCol>
