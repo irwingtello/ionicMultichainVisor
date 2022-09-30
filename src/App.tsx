@@ -10,11 +10,12 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { informationOutline, bookOutline, globeOutline ,search} from "ionicons/icons";
+import { informationOutline, bookOutline, globeOutline ,search, albums} from "ionicons/icons";
 import SelectBlockchain from "./pages/Selectblockchain";
 import ShowNfts from "./pages/ShowNFTS";
 import About from "./pages/About";
 import Offline from "./pages/Offline";
+import Address from "./pages/Address";
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 
@@ -53,6 +54,9 @@ const App: React.FC = () => (
           <Route path="/Offline">
            <Offline/>
           </Route>
+          <Route exact path="/Address">
+            <Address />
+          </Route>
           <Route exact path="/">
             <Redirect to="/SelectBlockchain" />
           </Route>
@@ -70,11 +74,15 @@ const App: React.FC = () => (
             <IonIcon icon={search} />
             <IonLabel>Offline</IonLabel>
           </IonTabButton>
+          <IonTabButton tab="Address" href="/Address">
+            <IonIcon icon={albums} />
+            <IonLabel>Address</IonLabel>
+          </IonTabButton>
           <IonTabButton tab="About" href="/About">
             <IonIcon icon={informationOutline} />
             <IonLabel>About</IonLabel>
           </IonTabButton>
-          </IonTabBar>
+        </IonTabBar>
       </IonTabs>
     </IonReactRouter>
   </IonApp>
