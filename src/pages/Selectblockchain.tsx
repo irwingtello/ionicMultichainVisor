@@ -35,8 +35,8 @@ const FIXED_HEIGHT = 168;
 
 const blockchains: IBlockchain[] = [
   {
-    chainId:"0x1",
-    name: "ETH",  //"Ethereum",
+    chainId: "0x1",
+    name: "ETH", //"Ethereum",
     img: "https://seeklogo.com/images/E/ethereum-logo-EC6CDBA45B-seeklogo.com.png",
   },
   {
@@ -44,7 +44,7 @@ const blockchains: IBlockchain[] = [
     name: "Polygon",
     img: "https://seeklogo.com/images/P/polygon-matic-logo-1DFDA3A3A8-seeklogo.com.png",
   },
-  
+
   {
     chainId: "0x38",
     name: "BNB", //"BSC",
@@ -90,16 +90,10 @@ const SelectBlockchain: React.FC = () => {
       </IonList>
     </IonContent>
   );
-  function navigateTo(name:string) {
+  function navigateTo(name: string) {
     // editar esto con UseContext
-    
-    
-    
+
     history.push(`/ShowNfts/${name}`);
-
-
-
-
   }
 
   const [present, dismiss] = useIonPopover(Popover, {
@@ -120,12 +114,9 @@ const SelectBlockchain: React.FC = () => {
         <IonGrid>
           <IonRow>
             <IonCol>
-              <div className="text-lg ion-margin-bottom">Select blockchain</div>
+              <div className="text-lg ion-margin-bottom">Select Blockchain</div>
             </IonCol>
-            <IonCol className="ion-text-right">
-             
-                
-            </IonCol>
+            <IonCol className="ion-text-right"></IonCol>
           </IonRow>
         </IonGrid>
         <IonGrid>
@@ -167,11 +158,7 @@ const SelectBlockchain: React.FC = () => {
                         })
                       }
                       className="ion-no-margin"
-                    >
-                     
-
-                      
-                    </IonCard>
+                    ></IonCard>
                   )}
                 </IonCol>
               ))}

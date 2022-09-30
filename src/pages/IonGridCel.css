@@ -8,11 +8,6 @@
   justify-content: center;
 }
 
-.div-buttons {
-  text-align: left;
-  flex: 100;
-}
-
 .div-flex {
   justify-content: space-between;
   flex-direction: row;

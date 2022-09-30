@@ -13,7 +13,7 @@ import {
 import { heart } from "ionicons/icons";
 import { useEffect, useState, useRef } from "react";
 
-export default function IonGridNFTS(
+export default function IonGridCel(
   chainId: any,
   nfts: any,
   isLoading: boolean
@@ -26,6 +26,7 @@ export default function IonGridNFTS(
 
   return (
     <>
+      <div></div>
       <IonGrid>
         {chainId === "all" ? ( //PoapMobil
           <></>
@@ -67,39 +68,41 @@ export default function IonGridNFTS(
                                 <IonCol className="td-left">
                                   {" "}
                                   Chain: 
-                                  <IonCol className="td-right">
+                                  <IonCol className="td-left1">
                                     {nft?.chain}
                                   </IonCol>
                                 </IonCol>
                               </IonRow>
+
                               <IonRow>
-                                <IonCol className="td-left">
-                                  Fancy_id: 
-                                  <IonCol className="td-right">
-                                    {nft?.fancy_id}
-                                  </IonCol>
-                                </IonCol>
+                                <IonCol className="td-left">Fancy_id: </IonCol>
                               </IonRow>
+                              <IonCol className="td-left1">
+                                {nft?.fancy_id}
+                              </IonCol>
+
                               <IonRow>
                                 <IonCol className="td-left">
                                   Year:
-                                  <IonCol className="td-right">
+                                  <IonCol className="td-left1">
                                     {nft?.tokenId}
                                   </IonCol>
                                 </IonCol>
                               </IonRow>
+
                               <IonRow>
                                 <IonCol className="td-left">
                                   Start_date: 
-                                  <IonCol className="td-right">
+                                  <IonCol className="td-left1">
                                     {nft?.start_date}
                                   </IonCol>
                                 </IonCol>
                               </IonRow>
+
                               <IonRow>
                                 <IonCol className="td-left">
                                   End_date: 
-                                  <IonCol className="td-right">
+                                  <IonCol className="td-left1">
                                     {nft?.end_date}
                                   </IonCol>
                                 </IonCol>
@@ -145,88 +148,89 @@ export default function IonGridNFTS(
                           <IonCol>
                             <IonGrid className="table-flex">
                               <IonRow>
-                                <IonCol className="td-left">
-                                  {" "}
-                                  Chain : 
-                                  <IonCol className="td-right">
-                                    {nft?.chain}
-                                  </IonCol>
-                                </IonCol>
+                                <IonCol className="td-left"> Chain: </IonCol>
                               </IonRow>
+                              <IonCol className="td-right">{nft?.chain}</IonCol>
+
                               <IonRow>
                                 <IonCol className="td-left">
                                   Contract Type: 
-                                  <IonCol className="td-right">
-                                    {nft?.contract_type}
-                                  </IonCol>
                                 </IonCol>
                               </IonRow>
+                              <IonCol className="td-left1">
+                                {nft?.contract_type}
+                              </IonCol>
 
                               <IonRow>
                                 <IonCol className="td-left" size="12">
                                   {" "}
                                   Token_Id:
-                                  <IonCol className="td-left1">
-                                    {nft?.token_id}
-                                  </IonCol>
                                 </IonCol>
                               </IonRow>
+                              <IonCol className="td-left1">
+                                {nft?.token_id}
+                              </IonCol>
+
                               <IonRow>
-                                <IonCol className="td-left">
-                                  Owner of: 
-                                  <IonCol className="td-right">
-                                    {nft?.owner_of}
-                                  </IonCol>
-                                </IonCol>
+                                <IonCol className="td-left">Owner of: </IonCol>
                               </IonRow>
+                              <IonCol className="td-left1">
+                                {nft?.owner_of}
+                              </IonCol>
+
                               <IonRow>
                                 <IonCol className="td-left">
                                   Token Address: 
-                                  <IonCol className="td-right">
-                                    {nft?.token_address}
-                                  </IonCol>
                                 </IonCol>
                               </IonRow>
+                              <IonCol className="td-left1">
+                                {nft?.token_address}
+                              </IonCol>
+
                               <IonRow>
                                 <IonCol className="td-left">
                                   Block number: 
-                                  <IonCol className="td-right">
-                                    {nft?.block_number}
-                                  </IonCol>
                                 </IonCol>
                               </IonRow>
+                              <IonCol className="td-left1">
+                                {nft?.block_number}
+                              </IonCol>
+
                               <IonRow>
                                 <IonCol className="td-left">
                                   Block number minted: 
-                                  <IonCol className="td-right">
-                                    {nft?.block_number_minted}
-                                  </IonCol>
                                 </IonCol>
                               </IonRow>
+                              <IonCol className="td-left1">
+                                {nft?.block_number_minted}
+                              </IonCol>
+
                               <IonRow>
                                 <IonCol className="td-left">
                                   Token Hash: 
-                                  <IonCol className="td-right">
-                                    {nft?.token_hash}
-                                  </IonCol>
                                 </IonCol>
                               </IonRow>
+                              <IonCol className="td-left1">
+                                {nft?.token_hash}
+                              </IonCol>
+
                               <IonRow>
                                 <IonCol className="td-left">
                                   Last Token Uri Sync:
-                                  <IonCol className="td-right">
-                                    {nft?.last_token_uri_sync}
-                                  </IonCol>
                                 </IonCol>
                               </IonRow>
+                              <IonCol className="td-left1">
+                                {nft?.last_token_uri_sync}
+                              </IonCol>
+
                               <IonRow>
                                 <IonCol className="td-left">
                                   Last Metadata Sync: 
-                                  <IonCol className="td-right">
-                                    {nft?.last_metadata_sync}
-                                  </IonCol>
                                 </IonCol>
                               </IonRow>
+                              <IonCol className="td-left1">
+                                {nft?.last_metadata_sync}
+                              </IonCol>
                             </IonGrid>
                           </IonCol>
                         </IonRow>
