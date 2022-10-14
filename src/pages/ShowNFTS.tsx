@@ -26,6 +26,9 @@ import IonGridCel from "./IonGridCel";
 
 let chainId: string;
 let row: number;
+let posts: any = [];
+let actualPage = 1;
+
 
 const ShowNfts: React.FC = () => {
   const params: any = useParams();
@@ -38,10 +41,15 @@ const ShowNfts: React.FC = () => {
   // console.log(params);
   const [blockchainName, setBlockchainName] = useState("");
   const [address, setAddress] = useState("");
+  const [nftsShowing, setNftsShowing] = useState<any>([]);
   const [nfts, setNfts] = useState<any>([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
+  const [totalPages, setTotalPages] = useState(1);
+
+  let DataURL: any;
+  let NftsForPage: number = 2;
 
   const Popover = () => (
     <IonContent className="ion-padding">
@@ -83,16 +91,64 @@ const ShowNfts: React.FC = () => {
 
   const { saveNFTs } = useStorage(); // Importamos nuestras funciones del archivo useStorage
 
-  const saveNftsHandle = async () => {
+  async function saveNftsHandle() {
     //  envía el objeto a sql para que agregue o actualice los nfts en el registro
+
+    console.log("Converting images...");
+    //console.log("Nft antes:   ", nfts);
+    for (let i = 0; i <= nfts.length - 1; i++) {
+      if (nfts[i].chain == "xDai") {
+        nfts[i].image = await getBase64Image(nfts[i].event.image_url);
+      }
+      else if (nfts[i].metadata != null) {
+        nfts[i].metadata.image = await getBase64Image(nfts[i].metadata.image);
+      }
+    }
+    console.log("Images converted!");
+
+    caches.keys().then((names) => {
+      names.forEach((name) => {
+        caches.delete(name);
+      });
+    });
     await saveNFTs(nfts, chainId, address);
   };
 
+  async function parseURI(d: any) {
+    var reader = new FileReader();    /* https://developer.mozilla.org/en-US/docs/Web/API/FileReader */
+    reader.readAsDataURL(d);          /* https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL */
+    return new Promise((res, rej) => {  /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise */
+      reader.onload = (e: any) => {        /* https://developer.mozilla.org/en-US/docs/Web/API/FileReader/onload */
+        res(e.target.result)
+      }
+    })
+  }
+
+  async function getBase64Image(urlCORS: any) {
+
+    //console.log("Url antes: ", urlCORS);
+
+    const xhr = new XMLHttpRequest();
+    const url = urlCORS;
+    xhr.open("GET", url);
+    xhr.send();
+
+    var res = await fetch(urlCORS);
+    var blob = await res.blob();
+    var uri = await parseURI(blob);
+    //console.log("Base64 Image:    ", uri);
+    return uri;
+  }
+
+
   async function fetchNfts() {
+
+    actualPage = 1;
+
     // valida input vacío
     if (address.trim().length === 0) {
       setErrorText("Write the address");
-      setNfts([]);
+      setNftsShowing([]);
     } else {
       setErrorText("");
       setIsLoading(true);
@@ -121,7 +177,6 @@ const ShowNfts: React.FC = () => {
             "X-Api-Key": API_KEY,
           },
         });
-        let posts = [];
         if (chainId != "xDai") {
           // return data
           // data.map((x: any) => x);
@@ -136,7 +191,8 @@ const ShowNfts: React.FC = () => {
               metadata.image =
                 metadata && metadata.image
                   ? metadata.image.replace("ipfs://", "https://ipfs.io/ipfs/")
-                  : "https://lh3.googleusercontent.com/5wX5t0QHTVMd-8KeqY9Y67l-giA9pVUOgc_BcyyjKVfCHxP21NQOHixiBPFpGZVsQi7-2Q=s170";
+                  : "https://live.staticflickr.com/65535/52418856778_a6fa0fc459_b.jpg";
+              //getBase64Image(metadata.image); // Case ETHEREUM
             }
             return {
               ...nft,
@@ -158,30 +214,113 @@ const ShowNfts: React.FC = () => {
               //nft.image = nft.image  &&  nft.image.replace("ipfs://", "https://ipfs.io/ipfs/");
               nft.image = nft.image
                 ? nft.image.replace("ipfs://", "https://ipfs.io/ipfs/")
-                : "https://lh3.googleusercontent.com/5wX5t0QHTVMd-8KeqY9Y67l-giA9pVUOgc_BcyyjKVfCHxP21NQOHixiBPFpGZVsQi7-2Q=s170";
+                : "https://live.staticflickr.com/65535/52418856778_a6fa0fc459_b.jpg";
               nft.image = nft.event.image_url;
               nft.nftId = nft.event.id;
               nft.fancy_id = nft.event.fancy_id;
               nft.year = nft.event.year;
               nft.start_date = nft.event.start_date;
-              nft.end_date = nft.event.end_date;
+              nft.end_date = nft.event.end_date;    // CASE POAP
+              //getBase64Image(nft.image);
               return nft;
             })
           );
         }
-        if (posts.length <= 0) {
+        if (posts.length <= 0)
           setErrorText("Sorry we don't found yours nfts");
-        }
+
+        //console.log("Image base64 :   ", posts[0].base64Image);
+
+        if (posts.length / NftsForPage <= Math.round(posts.length / NftsForPage)) //      1.5   <   2
+          setTotalPages(Math.round(posts.length / NftsForPage));
+        else //      1.4   >   1
+          setTotalPages(Math.round(posts.length / NftsForPage) + 1);
+
         setNfts(posts);
+
+        changePageNfts('neutro');
+
+        //console.log("Nfts:   ", nfts);
+        //console.log("Nfts showing:    ", nftsShowing);
+
+
+
         setIsLoading(false);
       } catch (error) {
         console.log(error);
         setErrorText("Invalid Address");
+        setNftsShowing([]);
+        setNfts([]);
+
       }
     }
   }
 
-  useEffect(() => {}, []);
+  function previousPage() {
+    changePageNfts("previous");
+  }
+  function nextPage() {
+    changePageNfts("next");
+  }
+
+  //useEffect(() => {
+  //
+  // }, [lblNftsShowing]);
+
+  function changePageNfts(type: 'previous' | 'next' | 'neutro') {
+
+    switch (type) {
+      case 'previous':
+        if (actualPage >= 2)
+          actualPage--;
+        break;
+      case 'next':
+        if (actualPage <= totalPages - 1)
+          actualPage++;
+        break;
+      default: break;
+    }
+
+
+    let postsPage: any = [];
+    for (let i = 0; i <= NftsForPage - 1; i++) {
+      postsPage[i] = posts[(NftsForPage * actualPage) + i - NftsForPage];
+    }
+
+    //console.log("posts ", posts);
+    //console.log("posts ", postsPage);
+
+    /* Antiguo
+    for (let i = 0; i <= NftsForPage - 1; i++) {
+      let element = (actualPage * NftsForPage) - NftsForPage + i;
+
+      if (element <= posts.length - 1)
+        postsPage[i] = posts[element];
+      else
+        break;
+    }// antiguo
+    */
+
+    setNftsShowing(postsPage.filter((nft: any) => typeof nft !== 'undefined'));
+    // console.log("nftshowing:    ", nftsShowing);
+  }
+
+  /*function toDataURL(url: string, callback: any) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        callback(reader.result);
+      }
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+  }*/
+
+
+  //useEffect(() => { }, []);
 
   return (
     <IonPage>
@@ -221,7 +360,7 @@ const ShowNfts: React.FC = () => {
                   Search
                 </IonButton>
                 {/*Button Save */}
-                  
+
                 <IonButton
                   onClick={() => saveNftsHandle()}
                   color="light"
@@ -234,14 +373,14 @@ const ShowNfts: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonLabel color="danger" className="my-label">
-                 {errorText}
+              {errorText}
             </IonLabel>
           </IonRow>
         </IonGrid>
 
         <div className="WebApp">
           {
-            IonGridNFTS(chainId, nfts, isLoading)
+            IonGridNFTS(chainId, nftsShowing, isLoading)
             /*<IonGridNFTS
             chainId={chainId}
             nfts={nfts}
@@ -254,7 +393,7 @@ const ShowNfts: React.FC = () => {
 
         <div className="Mobile">
           {
-            IonGridCel(chainId, nfts, isLoading)
+            IonGridCel(chainId, nftsShowing, isLoading)
             /*<IonGridNFTS
             chainId={chainId}
             nfts={nfts}
@@ -264,6 +403,15 @@ const ShowNfts: React.FC = () => {
           ></IonGridNFTS>*/
           }
         </div>
+        {
+          nfts.length != 0 ?
+            <IonGrid>
+              <IonButton onClick={previousPage}>❮</IonButton>
+              <IonButton onClick={nextPage}>❯</IonButton>
+              <IonLabel> Page: {actualPage} / {totalPages} - NFTs Finded: {nfts.length}</IonLabel>
+            </IonGrid>
+            : <></>
+        }
       </IonContent>
     </IonPage>
   );
