@@ -17,77 +17,77 @@ const NFTS_KEY = 'nft';
 // Este es el archivo que genera todo con sql, el otro archivo es la interfaz que muestra los datos con un map
 
 export function useStorage() {
-    const [store, setStore] = useState<Storage>();
-    const [nftsRecord, setNftsDb] = useState<any>([]); // contiene los registros en total
-    const initStorage = async () => {
+    let nftsDb: any = [];
+
+    async function saveNFTs(nfts: any, chain: any, address: string) {
+        /* 
+        */
         const newStore = new Storage({
-            name: 'nftdb',   // nombre de la base de datos (o de la tabla? )
+            name: 'nftdb' + chain,   // nombre de la base de datos (o de la tabla? )
             // Agregamos el orden de uso de drivers para que nuestra DB no altere datos de nuestra api y evitar problemas
             driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage]
         });
         await newStore.defineDriver(CordovaSQLiteDriver);
 
+
         const store = await newStore.create(); // asigna el nuevo almacenamiento de datos de sql
-        setStore(store);
 
         const storedNfts = await store.get(NFTS_KEY) || []; // obtiene de sql los registros
+
+        /* 
+        */
         //console.log('LOADED: ', storedNfts);   // carga en "todos" los registros de sql
-
-        setNftsDb(storedNfts);
-
-        return storedNfts;
-    }
-
-    async function saveNFTs(nfts: any, chain: any, address: string) {
-        initStorage();
-        let exists = nftsRecord.length == 0 ? 0 : 1;
+        //setNftsDb(storedNfts);
+        nftsDb = storedNfts;
+        //initStorage();
+        //let exists = nftsDb.length == 0 ? 0 : 1;
         //console.log(exists);
         let objectNFT: any = [];
         let chainArray: any = [];
         let addressArray: any = [];
         //console.log("xD");
 
-        if (exists == 0) {
+        console.log("Saving...");
+        try {
+        if (nftsDb.length == 0) {
             objectNFT = {
-                "nft":
-                {
-                    //Chain
-                    [chain]:
-                        //Address
-
-                        { [address]: nfts }
-
+                "nft": {
+                    [chain]: { [address]: nfts }
                 }
             };
             //Guardar un array de las direcciones que tiene el usuario
             //Si no tiene address la guarda y si tiene, lo sobrescribe
+
+            //store?.set(NFTS_KEY, JSON.stringify(objectNFT)); 
             store?.set(NFTS_KEY, JSON.stringify(objectNFT));
-            setNftsDb(objectNFT);
+
+            //console.log("nftkey: ", NFTS_KEY);
+            //console.log("JSONStringify: ", JSON.stringify(objectNFT));
+            
+            //setNftsDb(objectNFT);
+            nftsDb = objectNFT;
+
+
+            //console.log("Nfts Saved!", objectNFT);
+            //console.log("Nfts Saved!", nftsDb);
+
         }
         else {
-            let { nft } = JSON.parse(nftsRecord);
+            let { nft } = JSON.parse(nftsDb);
 
-            console.log(nft);
             let addressExists = false;
             let chainExists = false;
             for (const [chainField, addressList] of <any>Object.entries(nft)) {
-
                 if (chainField == chain) {
                     chainExists = true;
                     for (const [addressx, metadata] of Object.entries(addressList)) {
-                        if (addressx != address) {
+                        if (addressx != address)
                             addressArray[addressx] = metadata;
-                        }
                     }
-
                     chainArray[chainField] = addressArray;
                 }
             }
-
-            console.log("Address", address);
-            console.log("Chain", chainExists);
-            console.log("Address", addressExists);
-            console.log("---");
+            
             if (chainExists == false) {
                 if (addressExists == false) {
                     addressArray[address] = nfts;
@@ -97,27 +97,15 @@ export function useStorage() {
             }
             else {
                 if (addressExists == false) {
-                    for (let address in nft[chain]) {
-
-                        //Address
-                        console.log(address);
-                        //Value
-                        console.log(nft[chain][address]);
-
+                    for (let address in nft[chain])
                         addressArray[address] = nft[chain][address];
-                    }
                     addressArray[address] = nfts;
                     nft[chain] = addressArray;
                     chainArray = nft;
                 }
                 else {
-                    /*
-                    Chain true
-                    Address true
-                    */
-                    for (let address in nft[chain]) {
+                    for (let address in nft[chain])
                         addressArray[address] = nft[chain][address];
-                    }
 
                     addressArray[address] = nfts;
                     nft[chain] = addressArray;
@@ -127,38 +115,30 @@ export function useStorage() {
             let addressArrayx = "";
 
             for (const [chainField, addressList] of <any>Object.entries(chainArray)) {
-                for (const [address, metadata] of Object.entries(addressList)) {
+                for (const [address, metadata] of Object.entries(addressList))
                     addressArrayx = addressArrayx + '"' + address + '"' + ":" + JSON.stringify(metadata) + ",";
 
-                }
                 addressArrayx = addressArrayx.slice(0, -1);
                 masterArray = masterArray + '"' + chainField + '"' + ":" + "{" + addressArrayx + "},";
                 addressArrayx = "";
             }
-
+            
             masterArray = masterArray.slice(0, -1);
             masterArray = '{"nft":{' + masterArray + '}}';
             store?.set(NFTS_KEY, masterArray);
-
+            
+            //console.log("Nfts Saved! 2 ", masterArray);
+            //console.log("Nfts Saved! 2 ", nftsDb);
         }
+        //console.log("STORE:          ", store);
+        console.log("Nft Saved!");
+     }  
+     catch(error:any)
+     {
+        console.log("Error saving:   ", error);
+     }       
     }
-
-    async function showNfts(){
-        const nfts = await initStorage();
-
-        console.log(nfts);
-        //initStorage().then( (storedNfts)=>{
-            // destructuring objects or arrays
-        //    let nft  = nftsRecord;
-        //    console.log("Abajito");
-        //    console.log(nft);
-         //   return nft;
-       // }
-        //);
-    
-    }
-
 
     // useStorage retorna o exporta las const, como si fueran funciones
-    return { nftsDb: nftsRecord, saveNFTs, showNfts }
+    return { nftsDb, saveNFTs}
 }

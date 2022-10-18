@@ -23,21 +23,27 @@ import * as CordovaSQLiteDriver from "localforage-cordovasqlitedriver";
 import "./Addres.css";
 const NFTS_KEY = "nft";
 
+let posts: any = [];
+let actualPage = 1;
+let chainId = "";
+
 const Address: React.FC = () => {
   const [chainName, setChainName] = useState("");
-  const [chainId, setChainId] = useState("");
-  const [nftsRecord, setNftsRecord] = useState<any>([]); // contiene los registros en total
+  const [nftsShowing, setNftsShowing] = useState<any>([]); // contiene los registros en total
+  const [nfts, setNfts] = useState<any>([]);
   const [itemAddress, setItemAddress] = useState<any>([]);
-  const [selectAddressValue, setSelectAddressValue] = useState("");
-  const [searchOption, setSearchOption] = useState(false);
-  //const [addressArray, setAddressArray] = useState<any>([]);
+  const [selectAddressValue, setSelectAddressValue] = useState<any>("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isFindedNfts, setIsFindedNfts] = useState(true);
   const [errorText, setErrorText] = useState("");
+
+  const [totalPages, setTotalPages] = useState(1);
+
+  let NftsForPage: number = 2;
+
 
   const initStorage = async () => {
     const newStore = new Storage({
-      name: "nftdb", // nombre de la base de datos (o de la tabla? )
+      name: "nftdb" + chainId, // nombre de la base de datos (o de la tabla? )
       // Agregamos el orden de uso de drivers para que nuestra DB no altere datos de nuestra api y evitar problemas
       driverOrder: [
         CordovaSQLiteDriver._driver,
@@ -61,15 +67,18 @@ const Address: React.FC = () => {
   useEffect(() => {
     setChainName("all");
     initStorage().then((st) => {
-      console.log("st:   ", st);
-      let { nft } = JSON.parse(st);
-      let masterArray = [];
+      if (st != undefined && st.length != 0) {
 
-      for (let chainx in nft) {
-        for (let address_ in nft[chainx]) {
-          for (let metadata in nft[chainx][address_]) {
-            nft[chainx][address_][metadata].chain = chainx;
-            masterArray.push(nft[chainx][address_][metadata]);
+        //console.log("st:   ", st);
+        let { nft } = JSON.parse(st);
+        let masterArray = [];
+
+        for (let chainx in nft) {
+          for (let address_ in nft[chainx]) {
+            for (let metadata in nft[chainx][address_]) {
+              nft[chainx][address_][metadata].chain = chainx;
+              masterArray.push(nft[chainx][address_][metadata]);
+            }
           }
         }
       }
@@ -89,28 +98,39 @@ const Address: React.FC = () => {
     let itemAddress: itemAdressOption[] = [];
 
     initStorage().then((st) => {
-      const valuex = st;
+      //console.log(st);
+      if (st != undefined && st.length != 0) {
+        const valuex = st;
 
-      itemAddress = [];
-      if (valuex !== null) {
-        let { nft } = JSON.parse(valuex);
-        for (let addressArray in nft[chainField]) {
-          itemAddress.push({
-            value: addressArray,
-            label: addressArray,
-          });
+        itemAddress = [];
+        if (valuex !== null) {
+          let { nft } = JSON.parse(valuex);
+          for (let addressArray in nft[chainField]) {
+            itemAddress.push({
+              value: addressArray,
+              label: addressArray,
+            });
+          }
+          setItemAddress(itemAddress);
         }
         setItemAddress(itemAddress);
+
+        if (itemAddress.length == 1)
+          setSelectAddressValue(itemAddress[0].value);
       }
-      setItemAddress(itemAddress);
     });
   }
 
   async function DropDownChain_Onchange(selectedChainId: string) {
     //  recibe las "0x1", "0x89", "0x38"... etc
+
+    setErrorText("");
+
+
     setSelectAddressValue("");
-    setNftsRecord([]);
-    setChainId(selectedChainId);
+    setNftsShowing([]);
+    setNfts([]);
+    chainId = selectedChainId;
     switch (selectedChainId) {
       case "0x1":
         setChainName("ETH");
@@ -140,6 +160,10 @@ const Address: React.FC = () => {
   }
 
   async function fetchNfts() {
+
+    posts = [];
+    actualPage = 1;
+
     if (chainName == 'all' || chainName.length == 0)
       setErrorText("Select NFT");
     else if (selectAddressValue.length == 0) {
@@ -153,34 +177,36 @@ const Address: React.FC = () => {
         initStorage().then((st) => {
           let { nft } = JSON.parse(st);
 
-          let masterArray = [];
-
+          // Carga de todos los nfts encontrados
           for (let address in nft[chainId]) {
             for (let metadata in nft[chainId][address]) {
               nft[chainId][address][metadata].chain = chainId;
-              masterArray.push(nft[chainId][address][metadata]);
+              posts.push(nft[chainId][address][metadata]);
             }
           }
 
-          //Key
-          //console.log("master array -   ", masterArray);
-          if (chainId == 'xDai') {  // Si es POAP
-            setNftsRecord(masterArray.filter((masterArrayItem) => masterArrayItem.owner.toUpperCase() == selectAddressValue.toUpperCase()));
-            if (masterArray.filter((masterArrayItem) => masterArrayItem.owner.toUpperCase() == selectAddressValue.toUpperCase()).length == 0)
-              setErrorText("Not finded saved NFTs");
-            else
-              setErrorText("");
+          if (chainId == 'xDai')  // Si es POAP
+            posts = posts.filter((postItem: any) => postItem.owner.toUpperCase() == selectAddressValue.toUpperCase());
+          else
+            posts = posts.filter((postItem: any) => postItem.owner_of.toUpperCase() == selectAddressValue.toUpperCase());
 
+
+
+          if (posts.length / NftsForPage <= Math.round(posts.length / NftsForPage)) //      1.5   <   2
+            setTotalPages(Math.round(posts.length / NftsForPage));
+          else //      1.4   >   1
+            setTotalPages(Math.round(posts.length / NftsForPage) + 1);
+
+          setNfts(posts);
+
+          changePageNfts('neutro');
+
+          if (posts.length == 0) {
+            setErrorText("Not finded saved NFTs");
           }
-          else {  // Si es genérico
-            setNftsRecord(masterArray.filter((masterArrayItem) => masterArrayItem.owner_of.toUpperCase() == selectAddressValue.toUpperCase()));
-
-            if (masterArray.filter((masterArrayItem) => masterArrayItem.owner_of.toUpperCase() == selectAddressValue.toUpperCase()).length == 0)
-              setErrorText("Not finded saved NFTs");
-            else
-              setErrorText("");
+          else {
+            setErrorText("");
           }
-
 
 
           //setSelectAddressValue("adsfadsf");
@@ -190,6 +216,35 @@ const Address: React.FC = () => {
     }
 
   }
+
+  function previousPage() {
+    changePageNfts("previous");
+  }
+  function nextPage() {
+    changePageNfts("next");
+  }
+  function changePageNfts(type: 'previous' | 'next' | 'neutro') {
+
+    switch (type) {
+      case 'previous':
+        if (actualPage >= 2)
+          actualPage--;
+        break;
+      case 'next':
+        if (actualPage <= totalPages - 1)
+          actualPage++;
+        break;
+      default: break;
+    }
+
+    let postsPage: any = [];
+    for (let i = 0; i <= NftsForPage - 1; i++) {
+      postsPage[i] = posts[(NftsForPage * actualPage) + i - NftsForPage];
+    }
+
+    setNftsShowing(postsPage.filter((nft: any) => typeof nft !== 'undefined'));
+  }
+
 
   return (
     <IonPage>
@@ -305,7 +360,7 @@ const Address: React.FC = () => {
             /*IonGridNFTS(chainId, nfts)*/
             IonGridNFTS(
               chainId == null ? "all" : chainId,
-              nftsRecord,
+              nftsShowing,
               isLoading
             )
           }
@@ -316,11 +371,21 @@ const Address: React.FC = () => {
             /*IonGridNFTS(chainId, nfts)*/
             IonGridCel(
               chainId == null ? "all" : chainId,
-              nftsRecord,
+              nftsShowing,
               isLoading
             )
           }
         </div>
+        {
+          nfts.length != 0 ?
+            <IonGrid>
+              <IonButton onClick={previousPage}>❮</IonButton>
+              <IonButton onClick={nextPage}>❯</IonButton>
+              <IonLabel> Page: {actualPage} / {totalPages} - NFTs Finded: {nfts.length}</IonLabel>
+            </IonGrid>
+            : <></>
+        }
+
       </IonContent>
     </IonPage>
   );
