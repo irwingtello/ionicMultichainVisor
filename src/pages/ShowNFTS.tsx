@@ -101,7 +101,6 @@ const ShowNfts: React.FC = () => {
       try {
 
         console.log("Converting images...");
-        //console.log("Nft antes:   ", nfts);
         for (let i = 0; i <= nfts.length - 1; i++) {
           if (nfts[i].chain == "xDai") {
             nfts[i].image = await getBase64Image(nfts[i].event.image_url);
@@ -140,7 +139,7 @@ const ShowNfts: React.FC = () => {
   }
 
   async function getBase64Image(urlCORS: any) {
-    //console.log("Url antes: ", urlCORS);
+    //console.log("Url before: ", urlCORS);
     const xhr = new XMLHttpRequest();
     const url = urlCORS;
     xhr.open("GET", url);
@@ -166,7 +165,7 @@ const ShowNfts: React.FC = () => {
       setErrorText("");
       setIsLoading(true);
 
-      // Busca cual blockchain llegó por URL
+      // search which blockchain send the URL
       for (row = 0; row <= customData.length; row++) {
         if (customData[row].currentSymbol === blockchainName) {
           chain = customData[row].chainId;

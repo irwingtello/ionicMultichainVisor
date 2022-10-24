@@ -147,6 +147,5 @@ export function useStorage() {
         }
     }
 
-    // useStorage retorna o exporta las const, como si fueran funciones
     return { createConnection, getDataConnection, setDataConnection, saveNFTs }
 }

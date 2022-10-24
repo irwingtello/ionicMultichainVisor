@@ -24,8 +24,6 @@ let posts: any = [];
 let actualPage = 1;
 
 const Offline: React.FC = (pruebaParam: any) => {
-  //console.log(globalThis.storeConnection);
-
 
   const { getDataConnection } = useStorage();
   let clear = getDataConnection("tbClear");
@@ -34,7 +32,7 @@ const Offline: React.FC = (pruebaParam: any) => {
   const [errorText, setErrorText] = useState("");
   const [chain, setChain] = useState("");
   const [nfts, setNfts] = useState<any>([]);
-  const [nftsShowing, setNftsShowing] = useState<any>([]); // contiene los registros en total
+  const [nftsShowing, setNftsShowing] = useState<any>([]); 
 
   const [totalPages, setTotalPages] = useState(1);
   const [waiting, setWaiting] = useState(false);

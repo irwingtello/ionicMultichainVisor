@@ -26,7 +26,7 @@ export default function IonGridNFTS(
   return (
     <>
       <IonGrid>
-        {chainId === "all" ? ( //PoapMobil
+        {chainId === "all" ? ( //Poap Mobile
           <></>
         ) : (
           nfts.map((nft: any, nftIndex: number) =>

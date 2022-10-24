@@ -31,7 +31,7 @@ const Address: React.FC = () => {
   const { getDataConnection } = useStorage();
   let clear = getDataConnection("tbClear");
   const [chainName, setChainName] = useState("");
-  const [nftsShowing, setNftsShowing] = useState<any>([]); // contiene los registros en total
+  const [nftsShowing, setNftsShowing] = useState<any>([]); 
   const [nfts, setNfts] = useState<any>([]);
   const [itemAddress, setItemAddress] = useState<any>([]);
   const [selectAddressValue, setSelectAddressValue] = useState<any>("");
@@ -50,7 +50,7 @@ const Address: React.FC = () => {
   }
 
   async function DropDownChain_Onchange(selectedChainId: string) {
-    //  recibe las "0x1", "0x89", "0x38"... etc
+    //  receives "0x1", "0x89", "0x38"... and so 
     setWaiting(true);
     setMsgSearching("Searching Saved Address...");
     setErrorText("");
@@ -138,7 +138,7 @@ const Address: React.FC = () => {
 
         let { nft } = JSON.parse(st);
 
-        // Carga de todos los nfts encontrados
+        // chargue all nfts finded
         for (let address in nft[chain]) {
           for (let metadata in nft[chain][address]) {
             nft[chain][address][metadata].chain = chain;
@@ -146,7 +146,7 @@ const Address: React.FC = () => {
           }
         }
 
-        if (chain == 'xDai')  // Si es POAP
+        if (chain == 'xDai')  // if is POAP
           posts = posts.filter((postItem: any) => postItem.owner.toUpperCase() == selectAddressValue.toUpperCase());
         else
           posts = posts.filter((postItem: any) => postItem.owner_of.toUpperCase() == selectAddressValue.toUpperCase());

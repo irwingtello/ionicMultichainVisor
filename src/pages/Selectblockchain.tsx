@@ -91,7 +91,6 @@ const SelectBlockchain: React.FC = () => {
     </IonContent>
   );
   function navigateTo(name: string) {
-    // editar esto con UseContext
 
     history.push(`/ShowNfts/${name}`);
   }
