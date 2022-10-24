@@ -10,7 +10,7 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { informationOutline, bookOutline, globeOutline, search, albums } from "ionicons/icons";
+import { informationOutline, bookOutline, globeOutline ,search, albums} from "ionicons/icons";
 import SelectBlockchain from "./pages/Selectblockchain";
 import ShowNfts from "./pages/ShowNFTS";
 import About from "./pages/About";
@@ -35,66 +35,60 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 
-declare global {
-  var dbIsCreated: boolean | null;
-  var storeConnection: any;
-}
-
 setupIonicReact();
 
-const App: React.FC = () => {
-  return (
-    <IonApp>
-      <IonReactRouter>
-        <IonTabs>
-          <IonRouterOutlet>
-            <Route exact path="/SelectBlockchain">
-              <SelectBlockchain />
-            </Route>
-            <Route exact path="/ShowNfts/:blockchainName">
-              <ShowNfts />
-            </Route>
-            <Route path="/About">
-              <About />
-            </Route>
-            <Route path="/Offline">
-              <Offline />
-            </Route>
-            <Route exact path="/Address">
-              <Address />
-            </Route>
-            <Route exact path="/">
-              <Redirect to="/SelectBlockchain" />
-            </Route>
-          </IonRouterOutlet>
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="SelectBlockchain" href="/SelectBlockchain">
-              <IonIcon icon={globeOutline} />
-              <IonLabel>Blockchain</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="ShowNfts" href="/ShowNfts/ETH">
-              <IonIcon icon={bookOutline} />
-              <IonLabel>Reader</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="Offline" href="/Offline" >
-              <IonIcon icon={search} />
-              <IonLabel>Offline</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="Address" href="/Address">
-              <IonIcon icon={albums} />
-              <IonLabel>Address</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="About" href="/About">
-              <IonIcon icon={informationOutline} />
-              <IonLabel>About</IonLabel>
-            </IonTabButton>
-          </IonTabBar>
-        </IonTabs>
-      </IonReactRouter>
-    </IonApp>
+const App: React.FC = () => (
+  <IonApp>
+    <IonReactRouter>
+      <IonTabs>
+        <IonRouterOutlet>
+          <Route exact path="/SelectBlockchain">
+            <SelectBlockchain />
+          </Route>
+          <Route exact path="/ShowNfts/:blockchainName">
+            <ShowNfts/>
+          </Route>
+          <Route path="/About">
+            <About />
+          </Route>
+          <Route path="/Offline">
+           <Offline/>
+          </Route>
+          <Route exact path="/Address">
+            <Address />
+          </Route>
+          <Route exact path="/">
+            <Redirect to="/SelectBlockchain" />
+          </Route>
+        </IonRouterOutlet>
+        <IonTabBar slot="bottom">
+          <IonTabButton tab="SelectBlockchain" href="/SelectBlockchain">
+            <IonIcon icon={globeOutline} />
+            <IonLabel>Blockchain</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="ShowNfts" href="/ShowNfts">
+            <IonIcon icon={bookOutline} />
+            <IonLabel>Reader</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="Offline" href="/Offline">
+            <IonIcon icon={search} />
+            <IonLabel>Offline</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="Address" href="/Address">
+            <IonIcon icon={albums} />
+            <IonLabel>Address</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="About" href="/About">
+            <IonIcon icon={informationOutline} />
+            <IonLabel>About</IonLabel>
+          </IonTabButton>
+        </IonTabBar>
+      </IonTabs>
+    </IonReactRouter>
+  </IonApp>
 
-  );
 
-}
+
+);
 
 export default App;

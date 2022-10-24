@@ -11,6 +11,7 @@ import {
 } from "@ionic/react";
 
 import { heart } from "ionicons/icons";
+import { useEffect, useState, useRef } from "react";
 
 export default function IonGridCel(
   chainId: any,
@@ -27,11 +28,11 @@ export default function IonGridCel(
     <>
       <div></div>
       <IonGrid>
-        {chainId === "all" ? ( //Poap Mobile
+        {chainId === "all" ? ( //PoapMobil
           <></>
         ) : (
           nfts.map((nft: any, nftIndex: number) =>
-            nft.chain == "xDai" ? ( //Poap Web
+            nft.chain == "xDai" ? ( //PoapWEb
               <IonCol size="12" key={nftIndex}>
                 <IonCard className="ion-no-margin">
                   <IonCardHeader></IonCardHeader>
