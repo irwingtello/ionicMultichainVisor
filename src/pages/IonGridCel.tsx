@@ -11,7 +11,6 @@ import {
 } from "@ionic/react";
 
 import { heart } from "ionicons/icons";
-import { useEffect, useState, useRef } from "react";
 
 export default function IonGridCel(
   chainId: any,

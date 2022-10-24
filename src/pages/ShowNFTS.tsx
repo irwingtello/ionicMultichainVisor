@@ -23,12 +23,13 @@ import { useParams } from "react-router-dom";
 import { useStorage } from "./useStorage";
 import IonGridNFTS from "./IonGridNFTS";
 import IonGridCel from "./IonGridCel";
+import { wait } from "@testing-library/react";
 
-let chainId: string;
+let chain: string;
 let row: number;
 let posts: any = [];
 let actualPage = 1;
-
+let searching = false;
 
 const ShowNfts: React.FC = () => {
   const params: any = useParams();
@@ -47,6 +48,7 @@ const ShowNfts: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
   const [totalPages, setTotalPages] = useState(1);
+  const [waiting, setWaiting] = useState(false);
 
   let DataURL: any;
   let NftsForPage: number = 2;
@@ -89,29 +91,42 @@ const ShowNfts: React.FC = () => {
     side: "top-bottom",
   });
 
-  const { saveNFTs } = useStorage(); // Importamos nuestras funciones del archivo useStorage
+  const { saveNFTs } = useStorage();
 
   async function saveNftsHandle() {
-    //  envía el objeto a sql para que agregue o actualice los nfts en el registro
+    setWaiting(true);
+    searching = false;
 
-    console.log("Converting images...");
-    //console.log("Nft antes:   ", nfts);
-    for (let i = 0; i <= nfts.length - 1; i++) {
-      if (nfts[i].chain == "xDai") {
-        nfts[i].image = await getBase64Image(nfts[i].event.image_url);
+    if (nfts.length != 0) {
+      try {
+
+        console.log("Converting images...");
+        //console.log("Nft antes:   ", nfts);
+        for (let i = 0; i <= nfts.length - 1; i++) {
+          if (nfts[i].chain == "xDai") {
+            nfts[i].image = await getBase64Image(nfts[i].event.image_url);
+          }
+          else if (nfts[i].metadata != null) {
+            nfts[i].metadata.image = await getBase64Image(nfts[i].metadata.image);
+          }
+        }
+        console.log("Images converted!");
+
+        caches.keys().then((names) => {
+          names.forEach((name) => {
+            caches.delete(name);
+          });
+        });
+        await saveNFTs(nfts, chain, address);
       }
-      else if (nfts[i].metadata != null) {
-        nfts[i].metadata.image = await getBase64Image(nfts[i].metadata.image);
+      catch (error: any) {
+        //setErrorText("Error Saving. " + error + ". FANCY_ID: " + actualChain);
+        setErrorText("Error Saving.");
       }
     }
-    console.log("Images converted!");
-
-    caches.keys().then((names) => {
-      names.forEach((name) => {
-        caches.delete(name);
-      });
-    });
-    await saveNFTs(nfts, chainId, address);
+    else
+      setErrorText("Not Searching Nfts");
+    setWaiting(false);
   };
 
   async function parseURI(d: any) {
@@ -125,9 +140,7 @@ const ShowNfts: React.FC = () => {
   }
 
   async function getBase64Image(urlCORS: any) {
-
     //console.log("Url antes: ", urlCORS);
-
     const xhr = new XMLHttpRequest();
     const url = urlCORS;
     xhr.open("GET", url);
@@ -140,12 +153,12 @@ const ShowNfts: React.FC = () => {
     return uri;
   }
 
-
   async function fetchNfts() {
 
     actualPage = 1;
+    searching = true;
+    setWaiting(true);
 
-    // valida input vacío
     if (address.trim().length === 0) {
       setErrorText("Write the address");
       setNftsShowing([]);
@@ -156,28 +169,28 @@ const ShowNfts: React.FC = () => {
       // Busca cual blockchain llegó por URL
       for (row = 0; row <= customData.length; row++) {
         if (customData[row].currentSymbol === blockchainName) {
-          chainId = customData[row].chainId;
+          chain = customData[row].chainId;
           break;
         }
       }
 
       let API_URL =
-        chainId == "xDai"
+        chain == "xDai"
           ? "https://frontend.poap.tech/actions/scan/"
           : "https://deep-index.moralis.io/api/v2/";
       const API_KEY =
         "XUnDBl1fLvCROuwpgxpB645C1VrrjGGwfUDz6NmdJNo97qUCftf3a8TU0DGIu6Yo";
       let URL =
-        chainId == "xDai"
+        chain == "xDai"
           ? `${API_URL}${address}`
-          : `${API_URL}/${address}/nft?chain=${chainId}&format=decimal`;
+          : `${API_URL}/${address}/nft?chain=${chain}&format=decimal`;
       try {
         const { data } = await axios.get(URL, {
           headers: {
             "X-Api-Key": API_KEY,
           },
         });
-        if (chainId != "xDai") {
+        if (chain != "xDai") {
           // return data
           // data.map((x: any) => x);
           /*
@@ -196,7 +209,7 @@ const ShowNfts: React.FC = () => {
             }
             return {
               ...nft,
-              chain: chainId,
+              chain: chain,
               metadata,
             };
           });
@@ -209,7 +222,7 @@ const ShowNfts: React.FC = () => {
         } else {
           posts = await Promise.all(
             data.map(async (nft: any) => {
-              nft.chain = chainId;
+              nft.chain = chain;
               //Checar si no esta nulo,si no esta nulo, muestra y hace el replace
               //nft.image = nft.image  &&  nft.image.replace("ipfs://", "https://ipfs.io/ipfs/");
               nft.image = nft.image
@@ -242,18 +255,16 @@ const ShowNfts: React.FC = () => {
 
         //console.log("Nfts:   ", nfts);
         //console.log("Nfts showing:    ", nftsShowing);
-
-
-
         setIsLoading(false);
-      } catch (error) {
+      }
+      catch (error) {
         console.log(error);
         setErrorText("Invalid Address");
         setNftsShowing([]);
         setNfts([]);
-
       }
     }
+    setWaiting(false);
   }
 
   function previousPage() {
@@ -262,10 +273,6 @@ const ShowNfts: React.FC = () => {
   function nextPage() {
     changePageNfts("next");
   }
-
-  //useEffect(() => {
-  //
-  // }, [lblNftsShowing]);
 
   function changePageNfts(type: 'previous' | 'next' | 'neutro') {
 
@@ -281,46 +288,12 @@ const ShowNfts: React.FC = () => {
       default: break;
     }
 
-
     let postsPage: any = [];
     for (let i = 0; i <= NftsForPage - 1; i++) {
       postsPage[i] = posts[(NftsForPage * actualPage) + i - NftsForPage];
     }
-
-    //console.log("posts ", posts);
-    //console.log("posts ", postsPage);
-
-    /* Antiguo
-    for (let i = 0; i <= NftsForPage - 1; i++) {
-      let element = (actualPage * NftsForPage) - NftsForPage + i;
-
-      if (element <= posts.length - 1)
-        postsPage[i] = posts[element];
-      else
-        break;
-    }// antiguo
-    */
-
     setNftsShowing(postsPage.filter((nft: any) => typeof nft !== 'undefined'));
-    // console.log("nftshowing:    ", nftsShowing);
   }
-
-  /*function toDataURL(url: string, callback: any) {
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-      var reader = new FileReader();
-      reader.onloadend = function () {
-        callback(reader.result);
-      }
-      reader.readAsDataURL(xhr.response);
-    };
-    xhr.open('GET', url);
-    xhr.responseType = 'blob';
-    xhr.send();
-  }*/
-
-
-  //useEffect(() => { }, []);
 
   return (
     <IonPage>
@@ -349,25 +322,36 @@ const ShowNfts: React.FC = () => {
             </IonCol>
           </IonRow>
           <IonRow>
-            {/*Button Search */}
             <div className="div-buttons">
               <IonCol class="cell-class cell-align cell-buttons-size ">
-                <IonButton
-                  onClick={fetchNfts}
-                  color="primary"
-                  className="ion-activatable ripple-parent"
-                >
-                  Search
-                </IonButton>
-                {/*Button Save */}
+                {
+                  waiting == false ?      /*Button Search */
+                    <IonButton
+                      onClick={fetchNfts}
+                      color="primary"
+                      className="ion-activatable ripple-parent"
+                    >
+                      Search
+                    </IonButton> : <></>
+                }
 
-                <IonButton
-                  onClick={() => saveNftsHandle()}
-                  color="light"
-                  className="ion-activatable ripple-parent"
-                >
-                  Save
-                </IonButton>
+                {waiting == true && searching == true ?
+                  <IonLabel color="dark" className="my-label">Searching...</IonLabel>
+                  : ""}
+                {waiting == false ?           /*Button Save */
+                  <IonButton
+                    onClick={() => saveNftsHandle()}
+                    color="light"
+                    className="ion-activatable ripple-parent"
+                  >
+                    Save
+                  </IonButton>
+                  : <></>
+                }
+                {waiting == true && searching == false ? <IonLabel color="dark" className="my-label">Saving...</IonLabel>
+                  : ""}
+
+
               </IonCol>
             </div>
           </IonRow>
@@ -378,31 +362,9 @@ const ShowNfts: React.FC = () => {
           </IonRow>
         </IonGrid>
 
-        <div className="WebApp">
-          {
-            IonGridNFTS(chainId, nftsShowing, isLoading)
-            /*<IonGridNFTS
-            chainId={chainId}
-            nfts={nfts}
-            isLoading={isLoading}
-            isFindedNfts={isFindedNfts}
-            errorText={errorText}
-          ></IonGridNFTS>*/
-          }
-        </div>
+        <div className="WebApp">{IonGridNFTS(chain, nftsShowing, isLoading)}</div>
 
-        <div className="Mobile">
-          {
-            IonGridCel(chainId, nftsShowing, isLoading)
-            /*<IonGridNFTS
-            chainId={chainId}
-            nfts={nfts}
-            isLoading={isLoading}
-            isFindedNfts={isFindedNfts}
-            errorText={errorText}
-          ></IonGridNFTS>*/
-          }
-        </div>
+        <div className="Mobile">{IonGridCel(chain, nftsShowing, isLoading)}</div>
         {
           nfts.length != 0 ?
             <IonGrid>
