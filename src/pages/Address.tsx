@@ -15,21 +15,23 @@ import {
   IonSelectOption,
 } from "@ionic/react";
 import { useEffect, useState, useRef } from "react";
-import { Drivers, Storage } from "@ionic/storage";
 import IonGridNFTS from "./IonGridNFTS";
 import IonGridCel from "./IonGridCel";
+import { useStorage } from "./useStorage";
 
-import * as CordovaSQLiteDriver from "localforage-cordovasqlitedriver";
 import "./Addres.css";
-const NFTS_KEY = "nft";
 
 let posts: any = [];
 let actualPage = 1;
-let chainId = "";
+let chain = "";
 
 const Address: React.FC = () => {
+  const DB_Name = "Nfts_DB";
+
+  const { getDataConnection } = useStorage();
+  let clear = getDataConnection("tbClear");
   const [chainName, setChainName] = useState("");
-  const [nftsShowing, setNftsShowing] = useState<any>([]); // contiene los registros en total
+  const [nftsShowing, setNftsShowing] = useState<any>([]); 
   const [nfts, setNfts] = useState<any>([]);
   const [itemAddress, setItemAddress] = useState<any>([]);
   const [selectAddressValue, setSelectAddressValue] = useState<any>("");
@@ -37,130 +39,83 @@ const Address: React.FC = () => {
   const [errorText, setErrorText] = useState("");
 
   const [totalPages, setTotalPages] = useState(1);
+  const [waiting, setWaiting] = useState(false);
+  const [msgSearching, setMsgSearching] = useState("");
 
   let NftsForPage: number = 2;
-
-
-  const initStorage = async () => {
-    const newStore = new Storage({
-      name: "nftdb" + chainId, // nombre de la base de datos (o de la tabla? )
-      // Agregamos el orden de uso de drivers para que nuestra DB no altere datos de nuestra api y evitar problemas
-      driverOrder: [
-        CordovaSQLiteDriver._driver,
-        Drivers.IndexedDB,
-        Drivers.LocalStorage,
-      ],
-    });
-    await newStore.defineDriver(CordovaSQLiteDriver);
-
-    const store = await newStore.create(); // asigna el nuevo almacenamiento de datos de sql
-    // setStore(store);
-
-    const storedNfts = (await store.get(NFTS_KEY)) || []; // obtiene de sql los registros
-    //console.log('LOADED: ', storedNfts);   // carga en "todos" los registros de sql
-
-    //console.log("--");
-    //console.log(storedNfts);
-    return storedNfts;
-  };
-
-  useEffect(() => {
-    setChainName("all");
-    initStorage().then((st) => {
-      if (st != undefined && st.length != 0) {
-
-        //console.log("st:   ", st);
-        let { nft } = JSON.parse(st);
-        let masterArray = [];
-
-        for (let chainx in nft) {
-          for (let address_ in nft[chainx]) {
-            for (let metadata in nft[chainx][address_]) {
-              nft[chainx][address_][metadata].chain = chainx;
-              masterArray.push(nft[chainx][address_][metadata]);
-            }
-          }
-        }
-      }
-      // Descomentar esto despues 
-      //setNftsRecord(masterArray);   // Carga todos los address al inicio
-    });
-  }, []);
 
   interface itemAdressOption {
     value: string;
     label: string;
   }
 
-  async function searchAddress(chainField: string) {
-
+  async function DropDownChain_Onchange(selectedChainId: string) {
+    //  receives "0x1", "0x89", "0x38"... and so 
+    setWaiting(true);
+    setMsgSearching("Searching Saved Address...");
+    setErrorText("");
+    setSelectAddressValue("");
+    posts = [];
+    setNftsShowing([]);
+    setNfts([]);
+    setItemAddress([]);
+    chain = selectedChainId;
+    switch (selectedChainId) {
+      case "0x1": setChainName("ETH"); break;
+      case "0x89": setChainName("Polygon"); break;
+      case "0x38": setChainName("BNB"); break;
+      case "0xfa": setChainName("Fantom"); break;
+      case "0xa86a": setChainName("Avalanche"); break;
+      case "xDai": setChainName("POAP"); break;
+      default: setChainName(""); break;
+    }
 
     let itemAddress: itemAdressOption[] = [];
 
-    initStorage().then((st) => {
-      //console.log(st);
-      if (st != undefined && st.length != 0) {
-        const valuex = st;
+    const TableName = 'Chain_' + chain;
 
-        itemAddress = [];
-        if (valuex !== null) {
-          let { nft } = JSON.parse(valuex);
-          for (let addressArray in nft[chainField]) {
-            itemAddress.push({
-              value: addressArray,
-              label: addressArray,
-            });
-          }
-          setItemAddress(itemAddress);
+    let st = await getDataConnection(TableName);
+
+    console.log(itemAddress);
+
+    if (st != undefined && st.length != 0) {
+      const valuex = st;
+
+      itemAddress = [];
+      if (valuex !== null) {
+        let { nft } = JSON.parse(valuex);
+        for (let addressArray in nft[selectedChainId]) {
+          itemAddress.push({
+            value: addressArray,
+            label: addressArray,
+          });
         }
         setItemAddress(itemAddress);
-
-        if (itemAddress.length == 1)
-          setSelectAddressValue(itemAddress[0].value);
       }
-    });
+      setItemAddress(itemAddress);
+
+      if (itemAddress.length == 1)
+        setSelectAddressValue(itemAddress[0].value);
+
+    }
+    else
+      setErrorText("Not finded saved NFTs");
+
+    setWaiting(false);
+    setMsgSearching("");
+    let clear = getDataConnection("tbClear");
   }
 
-  async function DropDownChain_Onchange(selectedChainId: string) {
-    //  recibe las "0x1", "0x89", "0x38"... etc
-
+  function DropDownAddress_Onchange(selectedAddress: string) {
+    setSelectAddressValue(selectedAddress);
     setErrorText("");
-
-
-    setSelectAddressValue("");
+    posts = [];
     setNftsShowing([]);
     setNfts([]);
-    chainId = selectedChainId;
-    switch (selectedChainId) {
-      case "0x1":
-        setChainName("ETH");
-        break;
-      case "0x89":
-        setChainName("Polygon");
-        break;
-      case "0x38":
-        setChainName("BNB");
-        break;
-      case "0xfa":
-        setChainName("Fantom");
-        break;
-      case "0xa86a":
-        setChainName("Avalanche");
-        break;
-      case "xDai":
-        setChainName("POAP");
-        break;
-      default:
-        setChainName("all");
-        break;
-    }
-
-    await searchAddress(selectedChainId);
-    //setSelectAddressValue('');
+    let clear = getDataConnection("tbClear");
   }
 
   async function fetchNfts() {
-
     posts = [];
     actualPage = 1;
 
@@ -173,48 +128,52 @@ const Address: React.FC = () => {
         setErrorText("Select Address");
     }
     else {
-      if (chainId != null && selectAddressValue != null) {
-        initStorage().then((st) => {
-          let { nft } = JSON.parse(st);
+      if (chain != null && selectAddressValue != null) {
 
-          // Carga de todos los nfts encontrados
-          for (let address in nft[chainId]) {
-            for (let metadata in nft[chainId][address]) {
-              nft[chainId][address][metadata].chain = chainId;
-              posts.push(nft[chainId][address][metadata]);
-            }
+        setWaiting(true);
+        setMsgSearching("Searching...");
+
+        const TableName = 'Chain_' + chain;
+        let st = await getDataConnection(TableName);
+
+        let { nft } = JSON.parse(st);
+
+        // chargue all nfts finded
+        for (let address in nft[chain]) {
+          for (let metadata in nft[chain][address]) {
+            nft[chain][address][metadata].chain = chain;
+            posts.push(nft[chain][address][metadata]);
           }
+        }
 
-          if (chainId == 'xDai')  // Si es POAP
-            posts = posts.filter((postItem: any) => postItem.owner.toUpperCase() == selectAddressValue.toUpperCase());
-          else
-            posts = posts.filter((postItem: any) => postItem.owner_of.toUpperCase() == selectAddressValue.toUpperCase());
-
-
-
-          if (posts.length / NftsForPage <= Math.round(posts.length / NftsForPage)) //      1.5   <   2
-            setTotalPages(Math.round(posts.length / NftsForPage));
-          else //      1.4   >   1
-            setTotalPages(Math.round(posts.length / NftsForPage) + 1);
-
-          setNfts(posts);
-
-          changePageNfts('neutro');
-
-          if (posts.length == 0) {
-            setErrorText("Not finded saved NFTs");
-          }
-          else {
-            setErrorText("");
-          }
+        if (chain == 'xDai')  // if is POAP
+          posts = posts.filter((postItem: any) => postItem.owner.toUpperCase() == selectAddressValue.toUpperCase());
+        else
+          posts = posts.filter((postItem: any) => postItem.owner_of.toUpperCase() == selectAddressValue.toUpperCase());
 
 
-          //setSelectAddressValue("adsfadsf");
-          //setAddress(null);
-        });
+
+        if (posts.length / NftsForPage <= Math.round(posts.length / NftsForPage)) //      1.5   <   2
+          setTotalPages(Math.round(posts.length / NftsForPage));
+        else //      1.4   >   1
+          setTotalPages(Math.round(posts.length / NftsForPage) + 1);
+
+        setNfts(posts);
+
+        changePageNfts('neutro');
+
+        setWaiting(false);
+        setMsgSearching("");
+
+        if (posts.length == 0) {
+          setErrorText("Not finded saved NFTs");
+        }
+        else {
+          setErrorText("");
+        }
       }
     }
-
+    let clear = getDataConnection("tbClear");
   }
 
   function previousPage() {
@@ -289,59 +248,46 @@ const Address: React.FC = () => {
           <IonRow class="row-class">
             <IonCol size="12">
               <IonCol>
-                <IonSelect // Select 2 -  Address
-                  style={{ fontSize: "15px" }}
-                  //className="ion-hide-lg-up"
-                  interface="popover"
-                  placeholder="Select Address"
-                  value={selectAddressValue}
-                  onIonChange={(ev) => setSelectAddressValue(ev.detail.value)}
-                >
-                  {itemAddress.map((item: itemAdressOption, index: number) => {
-                    return (
-                      <IonSelectOption key={index} value={item.value}>
-                        {item.label}
-                      </IonSelectOption>
-                    );
-                  })}
-                </IonSelect>
-              </IonCol>
-              {/*
+                {
+                  chain != "" && itemAddress.length != 0 ?
+                    <IonSelect // Select 2 -  Address
+                      style={{ fontSize: "15px" }}
+                      //className="ion-hide-lg-up"
+                      interface="popover"
+                      placeholder="Select Address"
+                      value={selectAddressValue}
+                      //onIonChange={(ev) => setSelectAddressValue(ev.detail.value)}
+                      onIonChange={(ev) => DropDownAddress_Onchange(ev.detail.value)}
+                    >
+                      {
+                        itemAddress.map((item: itemAdressOption, index: number) => {
+                          return (
+                            <IonSelectOption key={index} value={item.value}>
+                              {item.label}
+                            </IonSelectOption>
+                          );
+                        })
+                      }
+                    </IonSelect>
+                    : <IonLabel color="dark" className="my-label">{msgSearching}</IonLabel>
 
-              <div className="selectAddres">
-                <select
-                  className="ion-hide-lg-down"
-                  name="NFTSAddres"
-                  id="lang"
-                  placeholder="Select Address"
-                  style={{ width: "900px", height: "64px", margin: "5 auto" }}
-                  value={selectAddressValue}
-                  onChange={(ev) => setSelectAddressValue(ev.)}
-                >
-                  {itemAddress.map((item: itemAdressOption, index: number) => {
-                    return (
-                      <option
-                        key={index == null ? 0 : index}
-                        defaultValue="0"
-                        value={item.value}
-                        >
-                        {item.label}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>*/
-              }
+                }
+              </IonCol>
             </IonCol>
 
             <IonCol>
-              <IonButton // Button search
-                color="primary"
-                className="ion-activatable ripple-parent"
-                onClick={fetchNfts}
-              >
-                Search
-              </IonButton>
+              {
+                nfts.length == 0 ?
+                  <IonButton // Button search
+                    color="primary"
+                    className="ion-activatable ripple-parent"
+                    onClick={fetchNfts}
+                  >
+                    Search
+                  </IonButton>
+                  : <IonLabel color="dark" className="my-label">{msgSearching}</IonLabel>
+
+              }
             </IonCol>
           </IonRow>
 
@@ -357,9 +303,8 @@ const Address: React.FC = () => {
 
         <div className="WebApp">
           {
-            /*IonGridNFTS(chainId, nfts)*/
             IonGridNFTS(
-              chainId == null ? "all" : chainId,
+              chain == null ? "all" : chain,
               nftsShowing,
               isLoading
             )
@@ -368,9 +313,8 @@ const Address: React.FC = () => {
 
         <div className="Mobile">
           {
-            /*IonGridNFTS(chainId, nfts)*/
             IonGridCel(
-              chainId == null ? "all" : chainId,
+              chain == null ? "all" : chain,
               nftsShowing,
               isLoading
             )
@@ -387,7 +331,7 @@ const Address: React.FC = () => {
         }
 
       </IonContent>
-    </IonPage>
+    </IonPage >
   );
 };
 
