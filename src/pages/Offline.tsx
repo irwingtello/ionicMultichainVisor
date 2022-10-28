@@ -24,7 +24,6 @@ let posts: any = [];
 let actualPage = 1;
 
 const Offline: React.FC = (pruebaParam: any) => {
-
   const { getDataConnection } = useStorage();
   let clear = getDataConnection("tbClear");
 
@@ -32,7 +31,7 @@ const Offline: React.FC = (pruebaParam: any) => {
   const [errorText, setErrorText] = useState("");
   const [chain, setChain] = useState("");
   const [nfts, setNfts] = useState<any>([]);
-  const [nftsShowing, setNftsShowing] = useState<any>([]); 
+  const [nftsShowing, setNftsShowing] = useState<any>([]);
 
   const [totalPages, setTotalPages] = useState(1);
   const [waiting, setWaiting] = useState(false);
@@ -55,13 +54,11 @@ const Offline: React.FC = (pruebaParam: any) => {
   }
 
   async function fetchNftsSaved() {
-
-    if (chain.length == 0)
-      setErrorText("Select NFT");
+    if (chain.length == 0) setErrorText("Select NFT");
     else {
       setMsgSearching("Searching...");
       setWaiting(true);
-      const TableName = 'Chain_' + chain;
+      const TableName = "Chain_" + chain;
 
       let st = await getDataConnection(TableName);
 
@@ -75,24 +72,26 @@ const Offline: React.FC = (pruebaParam: any) => {
           }
         }
 
-        if (posts.length / NftsForPage <= Math.round(posts.length / NftsForPage)) //      1.5   <   2
+        if (
+          posts.length / NftsForPage <=
+          Math.round(posts.length / NftsForPage)
+        )
+          //      1.5   <   2
           setTotalPages(Math.round(posts.length / NftsForPage));
-        else //      1.4   >   1
-          setTotalPages(Math.round(posts.length / NftsForPage) + 1);
+        //      1.4   >   1
+        else setTotalPages(Math.round(posts.length / NftsForPage) + 1);
 
         setNfts(posts);
 
-        changePageNfts('neutro');
+        changePageNfts("neutro");
         setErrorText("");
         setMsgSearching("");
-      }
-      else {
+      } else {
         setErrorText("Not finded saved NFTs");
         setWaiting(false);
       }
     }
     let clear = getDataConnection("tbClear");
-
   }
 
   function previousPage() {
@@ -102,31 +101,27 @@ const Offline: React.FC = (pruebaParam: any) => {
     changePageNfts("next");
   }
 
-  function changePageNfts(type: 'previous' | 'next' | 'neutro') {
-
+  function changePageNfts(type: "previous" | "next" | "neutro") {
     switch (type) {
-      case 'previous':
-        if (actualPage >= 2)
-          actualPage--;
+      case "previous":
+        if (actualPage >= 2) actualPage--;
         break;
-      case 'next':
-        if (actualPage <= totalPages - 1)
-          actualPage++;
+      case "next":
+        if (actualPage <= totalPages - 1) actualPage++;
         break;
-      default: break;
+      default:
+        break;
     }
 
     let postsPage: any = [];
     for (let i = 0; i <= NftsForPage - 1; i++) {
-      postsPage[i] = posts[(NftsForPage * actualPage) + i - NftsForPage];
+      postsPage[i] = posts[NftsForPage * actualPage + i - NftsForPage];
     }
 
-    setNftsShowing(postsPage.filter((nft: any) => typeof nft !== 'undefined'));
+    setNftsShowing(postsPage.filter((nft: any) => typeof nft !== "undefined"));
   }
 
-
   return (
-
     <IonPage>
       <IonHeader>
         <IonToolbar>
@@ -140,8 +135,12 @@ const Offline: React.FC = (pruebaParam: any) => {
             <IonCol class="cell-class">
               <div className="text-lg ion-margin-bottom ion-text-justify">
                 <IonList>
-                  <IonItem style={{ fontSize: "15px" }}>
+                  <IonItem
+                    className="inpuborder"
+                    style={{ fontSize: "15px", width: "100%" }}
+                  >
                     <IonSelect
+                      style={{ width: "100%" }}
                       interface="popover"
                       placeholder="Select NFT"
                       onIonChange={(ev) => {
@@ -153,7 +152,9 @@ const Offline: React.FC = (pruebaParam: any) => {
                       <IonSelectOption value="0x89">Polygon</IonSelectOption>
                       <IonSelectOption value="0x38">BNB</IonSelectOption>
                       <IonSelectOption value="0xfa">Fantom</IonSelectOption>
-                      <IonSelectOption value="0xa86a">Avalanche</IonSelectOption>
+                      <IonSelectOption value="0xa86a">
+                        Avalanche
+                      </IonSelectOption>
                       <IonSelectOption value="xDai">POAP</IonSelectOption>
                     </IonSelect>
                   </IonItem>
@@ -165,19 +166,20 @@ const Offline: React.FC = (pruebaParam: any) => {
           <IonRow>
             {/*Button Search */}
             <IonCol class="cell-class cell-align cell-buttons-size ">
-
-              {
-                waiting == false ?      /*Button Search */
-                  <IonButton
-                    onClick={fetchNftsSaved}
-                    color="primary"
-                    className="ion-activatable ripple-parent"
-                    style={{}}
-                  >
-                    Search
-                  </IonButton>
-                  : <IonLabel color="dark" className="my-label">{msgSearching}</IonLabel>
-              }
+              {waiting == false /*Button Search */ ? (
+                <IonButton
+                  onClick={fetchNftsSaved}
+                  color="primary"
+                  className="ion-activatable ripple-parent"
+                  style={{}}
+                >
+                  Search
+                </IonButton>
+              ) : (
+                <IonLabel color="dark" className="my-label">
+                  {msgSearching}
+                </IonLabel>
+              )}
             </IonCol>
           </IonRow>
           <IonRow>
@@ -190,11 +192,7 @@ const Offline: React.FC = (pruebaParam: any) => {
         <div className="WebApp">
           {
             /*IonGridNFTS(chainId, nfts)*/
-            IonGridNFTS(
-              chain == null ? "all" : chain,
-              nftsShowing,
-              isLoading
-            )
+            IonGridNFTS(chain == null ? "all" : chain, nftsShowing, isLoading)
           }
         </div>
 
@@ -205,19 +203,21 @@ const Offline: React.FC = (pruebaParam: any) => {
           }
         </div>
 
-        {
-          nfts.length != 0 ?
-            <IonGrid>
-              <IonButton onClick={previousPage}>❮</IonButton>
-              <IonButton onClick={nextPage}>❯</IonButton>
-              <IonLabel> Page: {actualPage} / {totalPages} - NFTs Finded: {nfts.length}</IonLabel>
-            </IonGrid>
-            : <></>
-        }
+        {nfts.length != 0 ? (
+          <IonGrid>
+            <IonButton onClick={previousPage}>❮</IonButton>
+            <IonButton onClick={nextPage}>❯</IonButton>
+            <IonLabel>
+              {" "}
+              Page: {actualPage} / {totalPages} - NFTs Finded: {nfts.length}
+            </IonLabel>
+          </IonGrid>
+        ) : (
+          <></>
+        )}
       </IonContent>
     </IonPage>
   );
 };
 
 export default Offline;
-

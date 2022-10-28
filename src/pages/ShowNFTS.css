@@ -218,6 +218,14 @@
   }
 }
 
+.inpuborder {
+  margin: 8px 0;
+  display: inline-block;
+  border: 3px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
 .body {
   background-color: white;
 }
@@ -243,4 +251,3 @@
 .pagination a:hover:not(.active) {
   background-color: #ddd;
 }
-

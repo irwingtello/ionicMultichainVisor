@@ -89,3 +89,15 @@
     justify-content: center;
   }
 }
+.inpuborder {
+  display: visible;
+  margin: 8px 0;
+  display: inline-block;
+  border: 3px solid #ccc;
+  border-radius: 100px;
+  box-sizing: border-box;
+}
+.droplist {
+  margin: 10px;
+  border-radius: 20px;
+}
