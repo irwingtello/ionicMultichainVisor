@@ -24,48 +24,19 @@ import { filterOutline, gridOutline, searchOutline } from "ionicons/icons";
 import { userInfo } from "os";
 import { useRef, useState } from "react";
 import "./Selectblockchain.css";
+import "../blockchains.json";
 
 interface IBlockchain {
   chainId: string;
-  name: string;
+  currentSymbol: string;
   img: string;
+  //currentSymbol: string;
 }
 
 const FIXED_HEIGHT = 168;
+//let blockchainsImg64: any[];
 
-const blockchains: IBlockchain[] = [
-  {
-    chainId: "0x1",
-    name: "ETH", //"Ethereum",
-    img: "https://seeklogo.com/images/E/ethereum-logo-EC6CDBA45B-seeklogo.com.png",
-  },
-  {
-    chainId: "0x89",
-    name: "Polygon",
-    img: "https://seeklogo.com/images/P/polygon-matic-logo-1DFDA3A3A8-seeklogo.com.png",
-  },
-
-  {
-    chainId: "0x38",
-    name: "BNB", //"BSC",
-    img: "https://seeklogo.com/images/B/binance-coin-bnb-logo-CD94CC6D31-seeklogo.com.png",
-  },
-  {
-    chainId: "0xfa",
-    name: "Fantom",
-    img: "https://cryptologos.cc/logos/fantom-ftm-logo.png",
-  },
-  {
-    chainId: "0xa86a",
-    name: "Avalanche",
-    img: "https://cryptologos.cc/logos/avalanche-avax-logo.png",
-  },
-  {
-    chainId: "xDai",
-    name: "POAP",
-    img: "https://poap.gallery/icons/poap_dark.png",
-  },
-];
+let blockchains: IBlockchain[] = require('../blockchains.json');
 
 const SelectBlockchain: React.FC = () => {
   const history = useHistory();
@@ -126,7 +97,7 @@ const SelectBlockchain: React.FC = () => {
                 <IonCol size="6" key={blockchainIndex}>
                   {blockchainIndex < 6 && (
                     <IonCard
-                      onClick={() => navigateTo(blockchain.name)} // chainId   o    name
+                      onClick={() => navigateTo(blockchain.currentSymbol)} // chainId   o    name
                       className="ion-no-margin"
                     >
                       <IonCardHeader>
@@ -141,7 +112,7 @@ const SelectBlockchain: React.FC = () => {
                       </IonCardHeader>
 
                       <IonCardContent>
-                        <p className="ion-text-center">{blockchain.name}</p>
+                        <p className="ion-text-center">{blockchain.currentSymbol}</p>
                       </IonCardContent>
                     </IonCard>
                   )}
