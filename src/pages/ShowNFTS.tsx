@@ -155,14 +155,16 @@ const ShowNfts: React.FC = () => {
   }
 
   async function fetchNfts() {
-    setNfts([]);
     actualPage = 1;
     searching = true;
     setWaiting(true);
 
     //console.log("Conectó: ", navigator.onLine);
 
-    if (address.trim().length === 0) {
+    if (navigator.onLine == false) {
+      setErrorText("Not connection");
+      setNftsShowing([]);
+    } else if (address.trim().length === 0) {
       setErrorText("Write the address");
       setNftsShowing([]);
     } else {
